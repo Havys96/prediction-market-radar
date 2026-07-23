@@ -176,7 +176,7 @@
 
     .kpis {
       display: grid;
-      grid-template-columns: repeat(4, minmax(0, 1fr));
+      grid-template-columns: repeat(5, minmax(0, 1fr));
       gap: 12px;
       margin-bottom: 12px;
     }
@@ -318,6 +318,22 @@
       font-size: 11px;
     }
 
+    .watch-btn {
+      width: 28px;
+      height: 28px;
+      border: 1px solid var(--line);
+      background: #10151a;
+      color: var(--muted);
+      border-radius: 7px;
+      padding: 0;
+    }
+
+    .watch-btn.active {
+      color: var(--amber);
+      border-color: #6f5a25;
+      background: #1b1609;
+    }
+
     .prob {
       display: flex;
       align-items: center;
@@ -354,6 +370,16 @@
       gap: 8px;
     }
 
+    .trade-card.hot {
+      border-color: #553437;
+      background: #1d1416;
+    }
+
+    .trade-card.watch {
+      border-color: #2e4962;
+      background: #121a23;
+    }
+
     .trade-top {
       display: flex;
       justify-content: space-between;
@@ -379,9 +405,22 @@
 
     .mini {
       display: grid;
-      grid-template-columns: repeat(3, 1fr);
+      grid-template-columns: repeat(auto-fit, minmax(130px, 1fr));
       gap: 8px;
       margin-top: 2px;
+    }
+
+    .metric-row {
+      display: grid;
+      grid-template-columns: 92px 1fr auto;
+      gap: 10px;
+      align-items: center;
+      color: #dce3ea;
+      font-size: 12px;
+    }
+
+    .metric-row .bar {
+      width: 100%;
     }
 
     .mini div {
@@ -535,6 +574,11 @@
             <div class="value green" id="kpiNews">9</div>
             <div class="delta">Matched within 60 minutes</div>
           </div>
+          <div class="kpi">
+            <div class="label">Anomaly alerts</div>
+            <div class="value red" id="kpiAnomalies">0</div>
+            <div class="delta">Unusual public-data movement</div>
+          </div>
         </div>
 
         <div class="grid">
@@ -544,6 +588,7 @@
                 <h2>Market Movers</h2>
                 <div class="tabs">
                   <button class="tab active" data-sort="radarScore">Radar</button>
+                  <button class="tab" data-sort="anomalyScore">Anomaly</button>
                   <button class="tab" data-sort="move">Probability</button>
                   <button class="tab" data-sort="vol">Volume</button>
                   <button class="tab" data-sort="liquidity">Liquidity</button>
@@ -552,7 +597,8 @@
               <table>
                 <thead>
                   <tr>
-                    <th style="width:43%">Market</th>
+                    <th style="width:8%">Watch</th>
+                    <th style="width:38%">Market</th>
                     <th>Radar</th>
                     <th>Probability</th>
                     <th>1h Move</th>
@@ -562,6 +608,14 @@
                 </thead>
                 <tbody id="marketRows"></tbody>
               </table>
+            </section>
+
+            <section class="panel">
+              <div class="panel-head">
+                <h2>Market Anomaly Detector</h2>
+                <span class="label">Probability, volume, liquidity, whale/news blend</span>
+              </div>
+              <div class="cards" id="anomalyCards"></div>
             </section>
 
             <section class="panel">
@@ -581,6 +635,14 @@
                 <tbody id="newsRows"></tbody>
               </table>
             </section>
+
+            <section class="panel">
+              <div class="panel-head">
+                <h2>Narrative Tracker</h2>
+                <span class="label">Where attention is clustering</span>
+              </div>
+              <div class="cards" id="narrativeCards"></div>
+            </section>
           </div>
 
           <div class="stack">
@@ -590,6 +652,17 @@
                 <span class="label">Observed public activity</span>
               </div>
               <div class="cards" id="whaleCards"></div>
+            </section>
+
+            <section class="panel">
+              <div class="panel-head">
+                <h2>Watchlist + Daily Digest</h2>
+                <span class="label">Stored locally in this browser</span>
+              </div>
+              <div class="cards">
+                <div id="watchlistCards"></div>
+                <div class="notice" id="dailyDigest">Add markets to the watchlist to build a local daily digest.</div>
+              </div>
             </section>
 
             <section class="panel">
@@ -614,6 +687,14 @@
                 </div>
               </div>
             </section>
+
+            <section class="panel">
+              <div class="panel-head">
+                <h2>Before / After Movement Log</h2>
+                <span class="label">Local snapshot comparison</span>
+              </div>
+              <div class="cards" id="movementLogCards"></div>
+            </section>
           </div>
         </div>
       </section>
@@ -634,6 +715,7 @@
               <div><span class="label">Estimated PnL</span><b class="green" id="walletPnl">+$42,180</b></div>
               <div><span class="label">Win rate</span><b id="walletWin">61.4%</b></div>
               <div><span class="label">Risk grade</span><b class="amber" id="walletRisk">B</b></div>
+              <div><span class="label">Alpha score</span><b class="blue" id="walletAlpha">72</b></div>
             </div>
             <table>
               <thead>
@@ -753,6 +835,34 @@
     ];
 
     let currentSort = "radarScore";
+    let watchlist = loadLocalList("pmr_watchlist");
+    let movementLog = loadLocalList("pmr_movement_log");
+
+    function loadLocalList(key) {
+      try {
+        const parsed = JSON.parse(localStorage.getItem(key) || "[]");
+        return Array.isArray(parsed) ? parsed : [];
+      } catch {
+        return [];
+      }
+    }
+
+    function saveLocalList(key, value) {
+      localStorage.setItem(key, JSON.stringify(value.slice(0, 80)));
+    }
+
+    function escapeHtml(value) {
+      return String(value ?? "")
+        .replace(/&/g, "&amp;")
+        .replace(/</g, "&lt;")
+        .replace(/>/g, "&gt;")
+        .replace(/"/g, "&quot;")
+        .replace(/'/g, "&#39;");
+    }
+
+    function marketKey(title) {
+      return String(title || "").toLowerCase().replace(/[^a-z0-9]+/g, "-").replace(/^-|-$/g, "").slice(0, 90);
+    }
 
     function money(n) {
       n = Number(n || 0);
@@ -782,8 +892,37 @@
       return Math.round(clamp(moveScore + volumeScore + liquidityScore + urgencyScore + signalScore, 0, 100));
     }
 
+    function calculateAnomaly(market) {
+      const move = Math.abs(Number(market.move || 0));
+      const volume = Number(market.vol || 0);
+      const liquidity = Number(market.liq ?? market.liquidity ?? 0);
+      const days = Number.isFinite(market.daysToClose) ? market.daysToClose : daysUntil(market.endDate);
+      const signal = String(market.signal || "").toLowerCase();
+      const whaleHit = whales.some(w => String(w.market || "").toLowerCase().includes(String(market.tag || "").toLowerCase()));
+      const moveScore = clamp(move * 2.7, 0, 34);
+      const volumeScore = clamp(Math.log10(volume + 1) * 4.6, 0, 28);
+      const liquidityScore = clamp(Math.log10(liquidity + 1) * 2.4, 0, 16);
+      const urgencyScore = days <= 1 ? 10 : days <= 7 ? 6 : 2;
+      const signalScore = (signal.includes("whale") || whaleHit ? 8 : 0) + (signal.includes("news") ? 6 : 0) + (signal.includes("volume") ? 5 : 0);
+      const score = Math.round(clamp(moveScore + volumeScore + liquidityScore + urgencyScore + signalScore, 0, 100));
+      const reasons = [];
+      if (move >= 15) reasons.push("sharp probability move");
+      else if (move >= 7) reasons.push("notable probability move");
+      if (volume >= 500000) reasons.push("heavy 24h volume");
+      if (liquidity >= 250000) reasons.push("deep liquidity");
+      if (days <= 1) reasons.push("near close");
+      if (signal.includes("news")) reasons.push("news-linked");
+      if (signal.includes("whale") || whaleHit) reasons.push("whale-linked");
+      if (!reasons.length) reasons.push("above baseline activity");
+      return { score, reasons };
+    }
+
     function decorateMarkets(items) {
-      return items.map(item => ({ ...item, radarScore: calculateRadarScore(item) }));
+      return items.map(item => {
+        const radarScore = calculateRadarScore(item);
+        const anomaly = calculateAnomaly({ ...item, radarScore });
+        return { ...item, radarScore, anomalyScore: anomaly.score, anomalyReasons: anomaly.reasons };
+      });
     }
 
     function parseJsonArray(value) {
@@ -835,18 +974,19 @@
         });
 
       document.getElementById("marketRows").innerHTML = rows.map(m => `
-        <tr data-title="${m.title}" data-tag="${m.tag}" data-liq="${money(m.liq ?? m.liquidity)}" data-vol="${money(m.vol)}" data-score="${m.radarScore}" data-close="${m.close || "n/a"}">
+        <tr data-title="${escapeHtml(m.title)}" data-tag="${escapeHtml(m.tag)}" data-liq="${money(m.liq ?? m.liquidity)}" data-vol="${money(m.vol)}" data-score="${m.radarScore}" data-close="${escapeHtml(m.close || "n/a")}">
+          <td><button class="watch-btn ${watchlist.some(item => item.key === marketKey(m.title)) ? "active" : ""}" data-watch="${marketKey(m.title)}" data-title="${escapeHtml(m.title)}" title="Toggle watchlist">★</button></td>
           <td>
             <div class="market">
-              <strong>${m.title}</strong>
-              <div class="chips"><span class="chip">${m.cat}</span><span class="chip">${m.tag}</span></div>
+              <strong>${escapeHtml(m.title)}</strong>
+              <div class="chips"><span class="chip">${escapeHtml(m.cat)}</span><span class="chip">${escapeHtml(m.tag)}</span></div>
             </div>
           </td>
           <td><span class="score">${m.radarScore}</span></td>
           <td><div class="prob"><div class="bar"><i style="width:${m.prob}%"></i></div><b>${m.prob}%</b></div></td>
           <td class="${m.move >= 0 ? "green" : "red"}">${m.move > 0 ? "+" : ""}${Number(m.move || 0).toFixed(1)}%</td>
           <td>${money(m.vol)}</td>
-          <td><span class="chip">${m.signal}</span></td>
+          <td><span class="chip">${escapeHtml(m.signal)}</span></td>
         </tr>
       `).join("");
 
@@ -860,6 +1000,18 @@
           document.getElementById("detailScore").textContent = row.dataset.score;
         });
       });
+
+      document.querySelectorAll(".watch-btn").forEach(button => {
+        button.addEventListener("click", event => {
+          event.stopPropagation();
+          toggleWatchlist(button.dataset.watch, button.dataset.title);
+        });
+      });
+
+      renderAnomalies();
+      renderNarratives();
+      renderWatchlist();
+      renderMovementLog();
     }
 
     function renderWhales() {
@@ -873,6 +1025,149 @@
           <span class="label">${w.action} in ${w.market}</span>
         </div>
       `).join("");
+    }
+
+    function renderAnomalies() {
+      const anomalies = decorateMarkets(markets)
+        .filter(m => Number(m.anomalyScore || 0) >= 50)
+        .sort((a, b) => (b.anomalyScore || 0) - (a.anomalyScore || 0))
+        .slice(0, 5);
+
+      document.getElementById("kpiAnomalies").textContent = String(anomalies.length);
+      document.getElementById("anomalyCards").innerHTML = anomalies.length ? anomalies.map(m => `
+        <div class="trade-card hot">
+          <div class="trade-top">
+            <strong>${escapeHtml(m.title)}</strong>
+            <span class="score">${m.anomalyScore}</span>
+          </div>
+          <div class="mini">
+            <div><span class="label">Move</span><b class="${m.move >= 0 ? "green" : "red"}">${m.move > 0 ? "+" : ""}${Number(m.move || 0).toFixed(1)}%</b></div>
+            <div><span class="label">Volume</span><b>${money(m.vol)}</b></div>
+            <div><span class="label">Radar</span><b class="blue">${m.radarScore}</b></div>
+          </div>
+          <span class="label">${m.anomalyReasons.map(escapeHtml).join(" / ")}</span>
+        </div>
+      `).join("") : `<div class="trade-card"><span class="label">No unusual public-data movement detected in the current sample.</span></div>`;
+    }
+
+    function renderNarratives() {
+      const grouped = new Map();
+      decorateMarkets(markets).forEach(m => {
+        const item = grouped.get(m.cat) || { count: 0, volume: 0, move: 0, anomaly: 0, top: "" };
+        item.count += 1;
+        item.volume += Number(m.vol || 0);
+        item.move += Math.abs(Number(m.move || 0));
+        item.anomaly = Math.max(item.anomaly, Number(m.anomalyScore || 0));
+        if (!item.top || Number(m.radarScore || 0) > Number(item.topScore || 0)) {
+          item.top = m.title;
+          item.topScore = m.radarScore;
+        }
+        grouped.set(m.cat, item);
+      });
+
+      const rows = [...grouped.entries()]
+        .map(([cat, item]) => ({ cat, ...item, avgMove: item.count ? item.move / item.count : 0 }))
+        .sort((a, b) => b.volume - a.volume)
+        .slice(0, 6);
+
+      document.getElementById("narrativeCards").innerHTML = rows.map(row => `
+        <div class="metric-row">
+          <strong>${escapeHtml(row.cat)}</strong>
+          <div class="bar"><i style="width:${clamp(row.anomaly, 8, 100)}%"></i></div>
+          <span>${money(row.volume)}</span>
+        </div>
+        <span class="label">${row.count} markets / avg move ${row.avgMove.toFixed(1)}% / top: ${escapeHtml(row.top)}</span>
+      `).join("");
+    }
+
+    function toggleWatchlist(key, title) {
+      const existing = watchlist.findIndex(item => item.key === key);
+      if (existing >= 0) {
+        watchlist.splice(existing, 1);
+      } else {
+        watchlist.unshift({ key, title, addedAt: new Date().toISOString() });
+      }
+      saveLocalList("pmr_watchlist", watchlist);
+      renderMarkets();
+    }
+
+    function renderWatchlist() {
+      const box = document.getElementById("watchlistCards");
+      if (!watchlist.length) {
+        box.innerHTML = `<div class="trade-card"><span class="label">Click ★ beside a market to add it here.</span></div>`;
+        document.getElementById("dailyDigest").textContent = "Add markets to the watchlist to build a local daily digest.";
+        return;
+      }
+
+      const decorated = decorateMarkets(markets);
+      const active = watchlist.map(item => {
+        const latest = decorated.find(m => marketKey(m.title) === item.key);
+        return { ...item, latest };
+      });
+
+      box.innerHTML = active.slice(0, 6).map(item => `
+        <div class="trade-card watch">
+          <div class="trade-top">
+            <strong>${escapeHtml(item.title)}</strong>
+            <button class="watch-btn active" data-watch="${item.key}" data-title="${escapeHtml(item.title)}">★</button>
+          </div>
+          <span class="label">${item.latest ? `Radar ${item.latest.radarScore} / anomaly ${item.latest.anomalyScore} / move ${Number(item.latest.move || 0).toFixed(1)}%` : "Waiting for this market in the current feed."}</span>
+        </div>
+      `).join("");
+
+      box.querySelectorAll(".watch-btn").forEach(button => {
+        button.addEventListener("click", () => toggleWatchlist(button.dataset.watch, button.dataset.title));
+      });
+
+      const hot = active.filter(item => item.latest && item.latest.anomalyScore >= 60);
+      document.getElementById("dailyDigest").textContent = hot.length
+        ? `Daily digest: ${hot.length} watched market(s) show unusual movement. Review anomaly cards before making any judgment.`
+        : `Daily digest: ${active.length} watched market(s), no high anomaly reading right now.`;
+    }
+
+    function renderMovementLog() {
+      const previous = new Map(loadLocalList("pmr_market_snapshot").map(item => [item.key, item]));
+      const snapshot = decorateMarkets(markets).map(m => ({
+        key: marketKey(m.title),
+        title: m.title,
+        prob: Number(m.prob || 0),
+        move: Number(m.move || 0),
+        radarScore: Number(m.radarScore || 0),
+        anomalyScore: Number(m.anomalyScore || 0),
+        seenAt: new Date().toISOString()
+      }));
+
+      const changes = snapshot.map(now => {
+        const before = previous.get(now.key);
+        if (!before) return null;
+        return {
+          ...now,
+          beforeProb: Number(before.prob || 0),
+          beforeRadar: Number(before.radarScore || 0),
+          probDelta: now.prob - Number(before.prob || 0),
+          radarDelta: now.radarScore - Number(before.radarScore || 0)
+        };
+      }).filter(Boolean)
+        .filter(item => Math.abs(item.probDelta) >= 2 || Math.abs(item.radarDelta) >= 5)
+        .sort((a, b) => Math.abs(b.probDelta) - Math.abs(a.probDelta))
+        .slice(0, 5);
+
+      if (changes.length) {
+        movementLog = [...changes.map(item => ({ ...item, loggedAt: new Date().toISOString() })), ...movementLog].slice(0, 20);
+        saveLocalList("pmr_movement_log", movementLog);
+      }
+      saveLocalList("pmr_market_snapshot", snapshot);
+
+      const rows = movementLog.slice(0, 5);
+      document.getElementById("movementLogCards").innerHTML = rows.length ? rows.map(item => `
+        <div class="trade-card">
+          <div class="trade-top">
+            <strong>${escapeHtml(item.title)}</strong>
+            <span class="${item.probDelta >= 0 ? "green" : "red"}">${item.probDelta >= 0 ? "+" : ""}${item.probDelta.toFixed(1)} pts</span>
+          </div>
+          <span class="label">Probability ${item.beforeProb.toFixed(0)}% → ${item.prob.toFixed(0)}% / Radar ${item.beforeRadar} → ${item.radarScore}</span>
+        </div>
+      `).join("") : `<div class="trade-card"><span class="label">Movement log starts after the next refresh. It compares the previous local snapshot with the current market feed.</span></div>`;
     }
 
     async function fetchJsonWithFallback(localUrl, externalUrl) {
@@ -968,6 +1263,7 @@
 
       document.getElementById("kpiWhales").textContent = String(whales.length);
       renderWhales();
+      renderAnomalies();
     }
 
     async function loadLiveData() {
@@ -1026,12 +1322,18 @@
       const winRate = allPositions.length ? wins / allPositions.length * 100 : 0;
       const activeValue = positions.reduce((sum, p) => sum + Number(p.currentValue || 0), 0);
       const riskGrade = activeValue > 500000 ? "C+" : activeValue > 150000 ? "B" : "A-";
+      const tradeDepth = clamp(Math.log10(allPositions.length + activity.length + 1) * 16, 0, 24);
+      const pnlScore = clamp(pnl / 2000, -15, 28);
+      const winScore = clamp((winRate - 45) * 0.9, -10, 24);
+      const riskPenalty = activeValue > 500000 ? 10 : activeValue > 150000 ? 4 : 0;
+      const alphaScore = Math.round(clamp(50 + tradeDepth + pnlScore + winScore - riskPenalty, 0, 100));
 
       const pnlEl = document.getElementById("walletPnl");
       pnlEl.textContent = signedMoney(pnl);
       pnlEl.className = pnl >= 0 ? "green" : "red";
       document.getElementById("walletWin").textContent = winRate.toFixed(1) + "%";
       document.getElementById("walletRisk").textContent = riskGrade;
+      document.getElementById("walletAlpha").textContent = String(alphaScore);
 
       const grouped = new Map();
       allPositions.forEach(p => {

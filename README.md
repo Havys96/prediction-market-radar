@@ -52,6 +52,11 @@ Mobile:
 - Tracks recent large public trades
 - Analyzes public wallet positions, closed positions, and activity
 - Displays estimated PnL, win rate, category breakdown, and recent trades
+- Detects unusual market activity with Market Anomaly Detector
+- Tracks category-level narratives and attention clusters
+- Stores a local watchlist and daily digest in the browser
+- Logs before/after market movement from local snapshots
+- Scores public wallets with an Alpha Score research metric
 - Includes local snapshot fallback data
 - Includes a local smoke test and GitHub Actions CI
 - Works locally with a tiny Python proxy server
@@ -142,6 +147,10 @@ MVP:
 
 - live market list
 - public large-trade radar
+- market anomaly detector
+- narrative tracker
+- local watchlist and daily digest
+- before/after movement log
 - wallet scorecard
 - recent activity table
 - local snapshot fallback

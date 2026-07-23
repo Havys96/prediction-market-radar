@@ -32,6 +32,11 @@ Initial public-ready MVP.
 - Launch playbook with first-week feedback plan
 - Publish script now pushes the `v0.1.0` tag
 - GitHub pull request template and data-source issue template
+- Market Anomaly Detector
+- Narrative Tracker
+- Watchlist and Daily Digest
+- Before/After Movement Log
+- Wallet Alpha Score
 
 ### Safety Boundary
 
