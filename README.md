@@ -130,6 +130,12 @@ MVP:
 - recent activity table
 - local snapshot fallback
 
+Current version:
+
+```text
+v0.1.0
+```
+
 Planned:
 
 - better probability-change history

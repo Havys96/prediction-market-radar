@@ -72,6 +72,8 @@ Release summary:
 Initial local MVP with read-only public market data, Radar Score, whale trade detection, wallet scorecard, snapshot cache, and GitHub-ready documentation.
 ```
 
+Release notes are also available in `CHANGELOG.md`.
+
 ## Profile Pin
 
 If early response is good, pin the repo on your GitHub profile.
