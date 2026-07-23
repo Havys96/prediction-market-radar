@@ -171,8 +171,9 @@ class Handler(BaseHTTPRequestHandler):
 
 
 def main() -> None:
-    server = ThreadingHTTPServer(("127.0.0.1", 8765), Handler)
+    server = ThreadingHTTPServer(("0.0.0.0", 8765), Handler)
     print("Prediction Market Radar running at http://127.0.0.1:8765", flush=True)
+    print("From another device on the same network, open http://YOUR_PC_IP:8765", flush=True)
     server.serve_forever()
 
 
