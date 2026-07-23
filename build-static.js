@@ -38,6 +38,7 @@ const assetFiles = [
   "data/whales.json",
   "docs/screenshot-desktop.png",
   "docs/screenshot-mobile.png",
+  "docs/hames-labs-profile-logo.png",
 ];
 
 const mimeTypes = {
