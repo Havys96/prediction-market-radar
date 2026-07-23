@@ -1,0 +1,1133 @@
+<!doctype html>
+<html lang="en">
+<head>
+  <meta charset="utf-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1" />
+  <title>Prediction Market Radar</title>
+  <style>
+    :root {
+      color-scheme: dark;
+      --bg: #0b0d10;
+      --panel: #14181d;
+      --panel-2: #191f25;
+      --line: #2a323b;
+      --text: #e8edf2;
+      --muted: #8f9aa6;
+      --green: #33c481;
+      --red: #f25d5d;
+      --amber: #f0bd45;
+      --blue: #5db7ff;
+      --violet: #a78bfa;
+      --shadow: 0 18px 60px rgba(0, 0, 0, .28);
+    }
+
+    * { box-sizing: border-box; }
+    body {
+      margin: 0;
+      background: var(--bg);
+      color: var(--text);
+      font-family: Inter, ui-sans-serif, system-ui, -apple-system, BlinkMacSystemFont, "Segoe UI", sans-serif;
+      letter-spacing: 0;
+    }
+
+    button, input, select { font: inherit; }
+    button { cursor: pointer; }
+
+    .app {
+      min-height: 100vh;
+      display: grid;
+      grid-template-columns: 248px 1fr;
+    }
+
+    aside {
+      border-right: 1px solid var(--line);
+      background: #0f1216;
+      padding: 18px 14px;
+      position: sticky;
+      top: 0;
+      height: 100vh;
+    }
+
+    .brand {
+      display: flex;
+      align-items: center;
+      gap: 10px;
+      padding: 8px 8px 18px;
+      border-bottom: 1px solid var(--line);
+    }
+
+    .mark {
+      width: 34px;
+      height: 34px;
+      display: grid;
+      place-items: center;
+      border: 1px solid #38556f;
+      background: #142331;
+      border-radius: 8px;
+      color: var(--blue);
+      font-weight: 800;
+    }
+
+    .brand h1 {
+      margin: 0;
+      font-size: 15px;
+      line-height: 1.15;
+    }
+
+    .brand span {
+      display: block;
+      margin-top: 2px;
+      color: var(--muted);
+      font-size: 12px;
+      font-weight: 500;
+    }
+
+    nav {
+      display: grid;
+      gap: 5px;
+      margin-top: 16px;
+    }
+
+    .nav-btn {
+      width: 100%;
+      display: flex;
+      align-items: center;
+      gap: 10px;
+      color: var(--muted);
+      background: transparent;
+      border: 1px solid transparent;
+      padding: 10px 10px;
+      border-radius: 8px;
+      text-align: left;
+    }
+
+    .nav-btn.active, .nav-btn:hover {
+      color: var(--text);
+      border-color: var(--line);
+      background: var(--panel);
+    }
+
+    .nav-ico {
+      width: 20px;
+      text-align: center;
+      color: var(--blue);
+    }
+
+    .risk-box {
+      margin-top: 18px;
+      padding: 12px;
+      border: 1px solid var(--line);
+      background: #10151a;
+      border-radius: 8px;
+      color: var(--muted);
+      font-size: 12px;
+      line-height: 1.45;
+    }
+
+    main {
+      min-width: 0;
+      padding: 20px;
+    }
+
+    .topbar {
+      display: grid;
+      grid-template-columns: minmax(240px, 1fr) auto auto;
+      gap: 12px;
+      align-items: center;
+      margin-bottom: 16px;
+    }
+
+    .search {
+      display: flex;
+      align-items: center;
+      gap: 10px;
+      min-height: 42px;
+      border: 1px solid var(--line);
+      background: var(--panel);
+      border-radius: 8px;
+      padding: 0 12px;
+    }
+
+    .search input {
+      width: 100%;
+      border: 0;
+      outline: 0;
+      background: transparent;
+      color: var(--text);
+    }
+
+    .control {
+      min-height: 42px;
+      border: 1px solid var(--line);
+      background: var(--panel);
+      color: var(--text);
+      border-radius: 8px;
+      padding: 0 10px;
+    }
+
+    .btn {
+      min-height: 42px;
+      border: 1px solid #33536f;
+      background: #132536;
+      color: var(--text);
+      border-radius: 8px;
+      padding: 0 13px;
+    }
+
+    .kpis {
+      display: grid;
+      grid-template-columns: repeat(4, minmax(0, 1fr));
+      gap: 12px;
+      margin-bottom: 12px;
+    }
+
+    .kpi, .panel {
+      border: 1px solid var(--line);
+      background: var(--panel);
+      border-radius: 8px;
+      box-shadow: var(--shadow);
+    }
+
+    .kpi {
+      padding: 14px;
+      min-height: 96px;
+    }
+
+    .label {
+      color: var(--muted);
+      font-size: 12px;
+      line-height: 1.25;
+    }
+
+    .value {
+      margin-top: 8px;
+      font-size: 25px;
+      font-weight: 760;
+      line-height: 1;
+    }
+
+    .delta {
+      margin-top: 10px;
+      font-size: 12px;
+      color: var(--muted);
+    }
+
+    .green { color: var(--green); }
+    .red { color: var(--red); }
+    .amber { color: var(--amber); }
+    .blue { color: var(--blue); }
+    .violet { color: var(--violet); }
+
+    .grid {
+      display: grid;
+      grid-template-columns: minmax(0, 1.4fr) minmax(320px, .9fr);
+      gap: 12px;
+    }
+
+    .stack {
+      display: grid;
+      gap: 12px;
+    }
+
+    .panel-head {
+      min-height: 54px;
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      gap: 12px;
+      padding: 0 14px;
+      border-bottom: 1px solid var(--line);
+    }
+
+    .panel h2 {
+      margin: 0;
+      font-size: 15px;
+      line-height: 1.2;
+    }
+
+    .tabs {
+      display: flex;
+      gap: 6px;
+      flex-wrap: wrap;
+    }
+
+    .tab {
+      min-height: 30px;
+      padding: 0 9px;
+      color: var(--muted);
+      border: 1px solid var(--line);
+      background: #11161b;
+      border-radius: 7px;
+    }
+
+    .tab.active {
+      color: var(--text);
+      border-color: #38556f;
+      background: #132536;
+    }
+
+    table {
+      width: 100%;
+      border-collapse: collapse;
+      table-layout: fixed;
+    }
+
+    th, td {
+      padding: 11px 14px;
+      border-bottom: 1px solid #222a32;
+      text-align: left;
+      vertical-align: middle;
+      font-size: 13px;
+    }
+
+    th {
+      color: var(--muted);
+      font-size: 11px;
+      font-weight: 650;
+      text-transform: uppercase;
+    }
+
+    td { color: #dce3ea; }
+    tbody tr:hover { background: rgba(255,255,255,.025); }
+
+    .market {
+      display: grid;
+      gap: 5px;
+      min-width: 0;
+    }
+
+    .market strong {
+      overflow: hidden;
+      text-overflow: ellipsis;
+      white-space: nowrap;
+      font-weight: 700;
+    }
+
+    .chips {
+      display: flex;
+      gap: 6px;
+      flex-wrap: wrap;
+    }
+
+    .chip {
+      color: var(--muted);
+      background: #10151a;
+      border: 1px solid var(--line);
+      border-radius: 999px;
+      padding: 3px 7px;
+      font-size: 11px;
+    }
+
+    .prob {
+      display: flex;
+      align-items: center;
+      gap: 9px;
+    }
+
+    .bar {
+      width: 82px;
+      height: 7px;
+      background: #25303a;
+      border-radius: 99px;
+      overflow: hidden;
+    }
+
+    .bar i {
+      display: block;
+      height: 100%;
+      background: var(--blue);
+      border-radius: inherit;
+    }
+
+    .cards {
+      display: grid;
+      gap: 10px;
+      padding: 12px;
+    }
+
+    .trade-card {
+      border: 1px solid var(--line);
+      background: var(--panel-2);
+      border-radius: 8px;
+      padding: 12px;
+      display: grid;
+      gap: 8px;
+    }
+
+    .trade-top {
+      display: flex;
+      justify-content: space-between;
+      gap: 10px;
+      font-size: 13px;
+    }
+
+    .wallet {
+      font-family: ui-monospace, SFMono-Regular, Menlo, Consolas, monospace;
+      color: #c8d2dc;
+    }
+
+    .score {
+      display: inline-grid;
+      place-items: center;
+      min-width: 36px;
+      height: 26px;
+      border-radius: 6px;
+      background: #132536;
+      color: var(--blue);
+      font-weight: 800;
+    }
+
+    .mini {
+      display: grid;
+      grid-template-columns: repeat(3, 1fr);
+      gap: 8px;
+      margin-top: 2px;
+    }
+
+    .mini div {
+      padding: 9px;
+      border: 1px solid var(--line);
+      background: #11161b;
+      border-radius: 8px;
+    }
+
+    .mini b {
+      display: block;
+      margin-top: 4px;
+      font-size: 14px;
+    }
+
+    .wallet-form {
+      display: grid;
+      grid-template-columns: 1fr auto;
+      gap: 8px;
+      padding: 12px;
+      border-bottom: 1px solid var(--line);
+    }
+
+    .wallet-form input {
+      min-height: 38px;
+      border: 1px solid var(--line);
+      background: #10151a;
+      color: var(--text);
+      border-radius: 8px;
+      padding: 0 10px;
+      min-width: 0;
+    }
+
+    .notice {
+      margin-top: 12px;
+      border: 1px solid #3b3320;
+      background: #18150e;
+      color: #d9c99d;
+      border-radius: 8px;
+      padding: 12px;
+      font-size: 12px;
+      line-height: 1.45;
+    }
+
+    .source-status {
+      margin: -6px 0 14px;
+      color: var(--muted);
+      font-size: 12px;
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      gap: 12px;
+      flex-wrap: wrap;
+    }
+
+    .source-status code {
+      color: #c8d2dc;
+      background: #11161b;
+      border: 1px solid var(--line);
+      border-radius: 6px;
+      padding: 3px 6px;
+    }
+
+    .view { display: none; }
+    .view.active { display: block; }
+
+    @media (max-width: 1080px) {
+      .app { grid-template-columns: 1fr; }
+      aside {
+        position: static;
+        height: auto;
+        border-right: 0;
+        border-bottom: 1px solid var(--line);
+      }
+      nav { grid-template-columns: repeat(3, minmax(0, 1fr)); }
+      .risk-box { display: none; }
+      .grid { grid-template-columns: 1fr; }
+    }
+
+    @media (max-width: 720px) {
+      main { padding: 12px; }
+      .topbar, .kpis, .mini { grid-template-columns: 1fr; }
+      nav { grid-template-columns: 1fr 1fr; }
+      th:nth-child(3), td:nth-child(3),
+      th:nth-child(5), td:nth-child(5) { display: none; }
+      .panel-head { align-items: flex-start; flex-direction: column; padding: 12px; }
+    }
+  </style>
+</head>
+<body>
+  <div class="app">
+    <aside>
+      <div class="brand">
+        <div class="mark">R</div>
+        <div>
+          <h1>Prediction Market Radar</h1>
+          <span>Read-only market intelligence</span>
+        </div>
+      </div>
+      <nav>
+        <button class="nav-btn active" data-view="radar"><span class="nav-ico">⌁</span> Radar</button>
+        <button class="nav-btn" data-view="wallets"><span class="nav-ico">◎</span> Wallets</button>
+        <button class="nav-btn" data-view="alerts"><span class="nav-ico">!</span> Alerts</button>
+        <button class="nav-btn" data-view="readme"><span class="nav-ico">#</span> README Angle</button>
+      </nav>
+      <div class="risk-box">
+        Research mode only. No wallet connection, private keys, order execution, trading advice, or geo-bypass guidance.
+      </div>
+    </aside>
+
+    <main>
+      <div class="topbar">
+        <label class="search">
+          <span class="blue">⌕</span>
+          <input id="searchInput" placeholder="Search markets, wallets, categories..." />
+        </label>
+        <select id="categoryFilter" class="control">
+          <option value="all">All categories</option>
+          <option value="crypto">Crypto</option>
+          <option value="politics">Politics</option>
+          <option value="macro">Macro</option>
+          <option value="sports">Sports</option>
+          <option value="culture">Culture</option>
+        </select>
+        <button id="refreshBtn" class="btn">Refresh sample</button>
+      </div>
+      <div class="source-status">
+        <span id="sourceStatus">Sample data loaded. Live public API will load automatically when available.</span>
+        <code>read-only / no wallet / no orders</code>
+      </div>
+
+      <section id="radar" class="view active">
+        <div class="kpis">
+          <div class="kpi">
+            <div class="label">Tracked markets</div>
+            <div class="value" id="kpiMarkets">128</div>
+            <div class="delta">Public-data watchlist</div>
+          </div>
+          <div class="kpi">
+            <div class="label">Largest 1h probability move</div>
+            <div class="value blue" id="kpiMove">+18.4%</div>
+            <div class="delta">No recommendation generated</div>
+          </div>
+          <div class="kpi">
+            <div class="label">Whale observations</div>
+            <div class="value amber" id="kpiWhales">14</div>
+            <div class="delta">Trades above $10k threshold</div>
+          </div>
+          <div class="kpi">
+            <div class="label">News-linked movers</div>
+            <div class="value green" id="kpiNews">9</div>
+            <div class="delta">Matched within 60 minutes</div>
+          </div>
+        </div>
+
+        <div class="grid">
+          <div class="stack">
+            <section class="panel">
+              <div class="panel-head">
+                <h2>Market Movers</h2>
+                <div class="tabs">
+                  <button class="tab active" data-sort="radarScore">Radar</button>
+                  <button class="tab" data-sort="move">Probability</button>
+                  <button class="tab" data-sort="vol">Volume</button>
+                  <button class="tab" data-sort="liquidity">Liquidity</button>
+                </div>
+              </div>
+              <table>
+                <thead>
+                  <tr>
+                    <th style="width:43%">Market</th>
+                    <th>Radar</th>
+                    <th>Probability</th>
+                    <th>1h Move</th>
+                    <th>24h Vol</th>
+                    <th>Signal</th>
+                  </tr>
+                </thead>
+                <tbody id="marketRows"></tbody>
+              </table>
+            </section>
+
+            <section class="panel">
+              <div class="panel-head">
+                <h2>News Match</h2>
+                <span class="label">Market movement explanation layer</span>
+              </div>
+              <table>
+                <thead>
+                  <tr>
+                    <th style="width:38%">Event</th>
+                    <th>Keyword</th>
+                    <th>Move</th>
+                    <th>Summary</th>
+                  </tr>
+                </thead>
+                <tbody id="newsRows"></tbody>
+              </table>
+            </section>
+          </div>
+
+          <div class="stack">
+            <section class="panel">
+              <div class="panel-head">
+                <h2>Whale Watch</h2>
+                <span class="label">Observed public activity</span>
+              </div>
+              <div class="cards" id="whaleCards"></div>
+            </section>
+
+            <section class="panel">
+              <div class="panel-head">
+                <h2>Market Detail</h2>
+                <span class="label" id="detailTag">BTC 15m panel</span>
+              </div>
+              <div class="cards">
+                <div class="trade-card">
+                  <div class="trade-top">
+                    <strong id="detailTitle">Bitcoin above current interval close?</strong>
+                    <span class="score" id="detailScore">72</span>
+                  </div>
+                  <div class="mini">
+                    <div><span class="label">Liquidity</span><b id="detailLiq">$284k</b></div>
+                    <div><span class="label">Volume</span><b id="detailVol">$1.9m</b></div>
+                    <div><span class="label">Closes</span><b id="detailClose">12m</b></div>
+                  </div>
+                  <div class="notice">
+                    This panel describes attention and probability movement only. It does not tell the user to buy, sell, enter, or copy a wallet.
+                  </div>
+                </div>
+              </div>
+            </section>
+          </div>
+        </div>
+      </section>
+
+      <section id="wallets" class="view">
+        <section class="panel">
+          <div class="panel-head">
+            <h2>Wallet Scorecard</h2>
+            <span class="label">Public wallet analytics, no wallet connection</span>
+          </div>
+          <div class="wallet-form">
+            <input id="walletInput" value="0x3a8aa345d5db7ec5138298c8c4f4540259be7699" />
+            <button id="analyzeBtn" class="btn">Analyze</button>
+          </div>
+          <div class="cards">
+            <span class="label" id="walletStatus">Enter a public wallet address. This reads public data only.</span>
+            <div class="mini">
+              <div><span class="label">Estimated PnL</span><b class="green" id="walletPnl">+$42,180</b></div>
+              <div><span class="label">Win rate</span><b id="walletWin">61.4%</b></div>
+              <div><span class="label">Risk grade</span><b class="amber" id="walletRisk">B</b></div>
+            </div>
+            <table>
+              <thead>
+                <tr>
+                  <th>Category</th>
+                  <th>Positions</th>
+                  <th>PnL</th>
+                  <th>Best market</th>
+                </tr>
+              </thead>
+              <tbody id="walletRows"></tbody>
+            </table>
+            <div class="panel-head" style="border:0; padding:4px 0 0; min-height:32px;">
+              <h2>Recent Activity</h2>
+              <span class="label">Observed public trades</span>
+            </div>
+            <table>
+              <thead>
+                <tr>
+                  <th>Type</th>
+                  <th>Market</th>
+                  <th>Side</th>
+                  <th>USDC</th>
+                </tr>
+              </thead>
+              <tbody id="activityRows"></tbody>
+            </table>
+          </div>
+        </section>
+      </section>
+
+      <section id="alerts" class="view">
+        <section class="panel">
+          <div class="panel-head">
+            <h2>Alert Rules</h2>
+            <span class="label">Local notifications only</span>
+          </div>
+          <div class="cards">
+            <div class="trade-card">
+              <div class="trade-top"><strong>Probability move</strong><span class="score">ON</span></div>
+              <span class="label">Notify when a watched market moves more than 8 percentage points in 15 minutes.</span>
+            </div>
+            <div class="trade-card">
+              <div class="trade-top"><strong>Whale trade</strong><span class="score">ON</span></div>
+              <span class="label">Notify when observed public trade size is above $10,000.</span>
+            </div>
+            <div class="trade-card">
+              <div class="trade-top"><strong>News-linked move</strong><span class="score">ON</span></div>
+              <span class="label">Notify when a top mover has a matching news keyword within 60 minutes.</span>
+            </div>
+            <div class="notice">
+              Pro boundary: Telegram and Discord alerts are acceptable if they remain descriptive. Avoid entry instructions, copy-trade buttons, and profit promises.
+            </div>
+          </div>
+        </section>
+      </section>
+
+      <section id="readme" class="view">
+        <section class="panel">
+          <div class="panel-head">
+            <h2>GitHub README Hook</h2>
+            <span class="label">Launch positioning</span>
+          </div>
+          <div class="cards">
+            <div class="trade-card">
+              <strong>Prediction Market Radar</strong>
+              <span class="label">A read-only intelligence dashboard for prediction markets. Find where probability, volume, and public wallet activity are moving without connecting a wallet or placing trades.</span>
+            </div>
+            <div class="trade-card">
+              <strong>Disclaimer</strong>
+              <span class="label">This project is for research and education only. It does not place trades, connect wallets, provide financial advice, encourage betting, or bypass geographic restrictions.</span>
+            </div>
+            <div class="trade-card">
+              <strong>Radar Score</strong>
+              <span class="label">A research-priority score based on probability movement, volume, liquidity, close timing, and descriptive whale/news/volume signals. It is not a trading recommendation.</span>
+            </div>
+            <div class="trade-card">
+              <strong>Support</strong>
+              <span class="label">If this saved you time, you can support open-source development through GitHub Sponsors or Buy Me a Coffee. Donations are optional and are not payment for signals, advice, or restricted access.</span>
+            </div>
+          </div>
+        </section>
+      </section>
+    </main>
+  </div>
+
+  <script>
+    let markets = [
+      { title: "BTC above current 15m close?", cat: "crypto", prob: 72, move: 18.4, vol: 1900000, liq: 284000, tag: "BTC 15m", signal: "volume confirmed", close: "12m" },
+      { title: "Fed cuts rates at next meeting?", cat: "macro", prob: 41, move: -9.8, vol: 840000, liq: 311000, tag: "FOMC", signal: "news matched", close: "5d" },
+      { title: "Candidate A wins national election?", cat: "politics", prob: 56, move: 7.2, vol: 2400000, liq: 920000, tag: "Election", signal: "whale entered", close: "31d" },
+      { title: "Ethereum ETF sees net inflow this week?", cat: "crypto", prob: 64, move: 12.1, vol: 620000, liq: 177000, tag: "ETH", signal: "momentum", close: "2d" },
+      { title: "Lakers win next scheduled game?", cat: "sports", prob: 48, move: -6.5, vol: 210000, liq: 74000, tag: "NBA", signal: "late volume", close: "4h" },
+      { title: "Major AI model released before month end?", cat: "culture", prob: 33, move: 10.6, vol: 390000, liq: 96000, tag: "AI", signal: "social spike", close: "7d" },
+      { title: "Oil closes above $90 this quarter?", cat: "macro", prob: 27, move: 4.1, vol: 156000, liq: 88000, tag: "Oil", signal: "slow build", close: "68d" }
+    ];
+
+    let whales = [
+      { wallet: "0x4a92...c01e", amount: "$42,300", market: "BTC 15m", action: "new YES exposure", score: 88 },
+      { wallet: "0x79ff...0ab4", amount: "$18,900", market: "Election winner", action: "added to existing position", score: 81 },
+      { wallet: "0x13bd...88aa", amount: "$12,400", market: "ETH ETF inflow", action: "new market entry", score: 74 },
+      { wallet: "0xb921...77fd", amount: "$10,800", market: "FOMC cut", action: "reduced exposure", score: 69 }
+    ];
+
+    const news = [
+      { event: "Fed cuts rates at next meeting?", key: "FOMC", move: "-9.8%", summary: "Officials signaled a slower path; market odds repriced lower." },
+      { event: "ETH ETF sees net inflow this week?", key: "ETF flow", move: "+12.1%", summary: "Large inflow headline matched the move window." },
+      { event: "Major AI model released before month end?", key: "AI release", move: "+10.6%", summary: "Developer chatter increased around a launch window." },
+      { event: "Candidate A wins national election?", key: "poll", move: "+7.2%", summary: "New polling moved liquidity toward the leading outcome." }
+    ];
+
+    const walletRows = [
+      ["Crypto", "184", "+$28,420", "BTC 15m intervals"],
+      ["Politics", "62", "+$9,880", "National election winner"],
+      ["Macro", "41", "-$3,210", "Rate cut timing"],
+      ["Sports", "29", "+$7,090", "Basketball spreads"]
+    ];
+
+    let currentSort = "radarScore";
+
+    function money(n) {
+      n = Number(n || 0);
+      if (n >= 1000000) return "$" + (n / 1000000).toFixed(1) + "m";
+      return "$" + Math.round(n / 1000) + "k";
+    }
+
+    function clamp(n, min, max) {
+      return Math.max(min, Math.min(max, n));
+    }
+
+    function daysUntil(dateValue) {
+      if (!dateValue) return 999;
+      const ts = new Date(dateValue).getTime();
+      if (!Number.isFinite(ts)) return 999;
+      return Math.max(0, (ts - Date.now()) / 86400000);
+    }
+
+    function calculateRadarScore(market) {
+      const moveScore = clamp(Math.abs(Number(market.move || 0)) * 2.2, 0, 30);
+      const volumeScore = clamp(Math.log10(Number(market.vol || 0) + 1) * 5.2, 0, 30);
+      const liquidityScore = clamp(Math.log10(Number(market.liq ?? market.liquidity ?? 0) + 1) * 3.2, 0, 18);
+      const days = Number.isFinite(market.daysToClose) ? market.daysToClose : daysUntil(market.endDate);
+      const urgencyScore = days <= 1 ? 14 : days <= 7 ? 9 : days <= 30 ? 5 : 1;
+      const signal = String(market.signal || "").toLowerCase();
+      const signalScore = signal.includes("whale") ? 8 : signal.includes("news") ? 6 : signal.includes("volume") ? 5 : 2;
+      return Math.round(clamp(moveScore + volumeScore + liquidityScore + urgencyScore + signalScore, 0, 100));
+    }
+
+    function decorateMarkets(items) {
+      return items.map(item => ({ ...item, radarScore: calculateRadarScore(item) }));
+    }
+
+    function parseJsonArray(value) {
+      if (Array.isArray(value)) return value;
+      if (typeof value !== "string") return [];
+      try { return JSON.parse(value); } catch { return []; }
+    }
+
+    function inferCategory(market) {
+      const text = [
+        market.question,
+        market.title,
+        market.slug,
+        market.description,
+        JSON.stringify(market.tags || "")
+      ].join(" ").toLowerCase();
+
+      if (/(bitcoin|btc|ethereum|eth|crypto|solana|xrp|doge|binance)/.test(text)) return "crypto";
+      if (/(trump|biden|election|senate|president|politic|congress|candidate)/.test(text)) return "politics";
+      if (/(fed|rate|inflation|cpi|oil|gdp|recession|economy|tariff)/.test(text)) return "macro";
+      if (/(nba|nfl|mlb|fifa|world cup|lakers|soccer|tennis|ufc|sports)/.test(text)) return "sports";
+      return "culture";
+    }
+
+    function firstNumber(...values) {
+      for (const value of values) {
+        const n = Number(value);
+        if (Number.isFinite(n)) return n;
+      }
+      return 0;
+    }
+
+    function formatWallet(address) {
+      if (!address || address.length < 12) return address || "unknown";
+      return address.slice(0, 6) + "..." + address.slice(-4);
+    }
+
+    function renderMarkets() {
+      const q = document.getElementById("searchInput").value.toLowerCase();
+      const cat = document.getElementById("categoryFilter").value;
+      markets = decorateMarkets(markets);
+      const rows = markets
+        .filter(m => cat === "all" || m.cat === cat)
+        .filter(m => !q || (m.title + " " + m.cat + " " + m.tag + " " + m.signal).toLowerCase().includes(q))
+        .sort((a, b) => {
+          const av = Number(a[currentSort] ?? a.liq ?? a.liquidity ?? 0);
+          const bv = Number(b[currentSort] ?? b.liq ?? b.liquidity ?? 0);
+          return Math.abs(bv) - Math.abs(av);
+        });
+
+      document.getElementById("marketRows").innerHTML = rows.map(m => `
+        <tr data-title="${m.title}" data-tag="${m.tag}" data-liq="${money(m.liq ?? m.liquidity)}" data-vol="${money(m.vol)}" data-score="${m.radarScore}" data-close="${m.close || "n/a"}">
+          <td>
+            <div class="market">
+              <strong>${m.title}</strong>
+              <div class="chips"><span class="chip">${m.cat}</span><span class="chip">${m.tag}</span></div>
+            </div>
+          </td>
+          <td><span class="score">${m.radarScore}</span></td>
+          <td><div class="prob"><div class="bar"><i style="width:${m.prob}%"></i></div><b>${m.prob}%</b></div></td>
+          <td class="${m.move >= 0 ? "green" : "red"}">${m.move > 0 ? "+" : ""}${Number(m.move || 0).toFixed(1)}%</td>
+          <td>${money(m.vol)}</td>
+          <td><span class="chip">${m.signal}</span></td>
+        </tr>
+      `).join("");
+
+      document.querySelectorAll("#marketRows tr").forEach(row => {
+        row.addEventListener("click", () => {
+          document.getElementById("detailTitle").textContent = row.dataset.title;
+          document.getElementById("detailTag").textContent = row.dataset.tag;
+          document.getElementById("detailLiq").textContent = row.dataset.liq;
+          document.getElementById("detailVol").textContent = row.dataset.vol;
+          document.getElementById("detailClose").textContent = row.dataset.close;
+          document.getElementById("detailScore").textContent = row.dataset.score;
+        });
+      });
+    }
+
+    function renderWhales() {
+      document.getElementById("whaleCards").innerHTML = whales.map(w => `
+        <div class="trade-card">
+          <div class="trade-top">
+            <span class="wallet">${w.wallet}</span>
+            <span class="score">${w.score}</span>
+          </div>
+          <strong>${w.amount} observed</strong>
+          <span class="label">${w.action} in ${w.market}</span>
+        </div>
+      `).join("");
+    }
+
+    async function fetchJsonWithFallback(localUrl, externalUrl) {
+      try {
+        const localResponse = await fetch(localUrl, { cache: "no-store" });
+        if (localResponse.ok) return await localResponse.json();
+      } catch {}
+      const externalResponse = await fetch(externalUrl, { cache: "no-store" });
+      if (!externalResponse.ok) throw new Error(externalUrl + " " + externalResponse.status);
+      return await externalResponse.json();
+    }
+
+    async function loadLiveMarkets() {
+      const data = await fetchJsonWithFallback(
+        "/api/markets",
+        "https://gamma-api.polymarket.com/markets?active=true&closed=false&limit=80&order=volume24hr&ascending=false"
+      );
+
+      markets = data
+        .filter(m => m && m.question && !m.closed)
+        .map(m => {
+          const outcomes = parseJsonArray(m.outcomes);
+          const prices = parseJsonArray(m.outcomePrices).map(Number);
+          const yesIndex = Math.max(0, outcomes.findIndex(o => String(o).toLowerCase() === "yes"));
+          const yesPrice = Number.isFinite(prices[yesIndex]) ? prices[yesIndex] : firstNumber(m.lastTradePrice, m.bestBid, 0);
+          const move = firstNumber(
+            m.oneHourPriceChange,
+            m.oneHourPriceChangePercent,
+            m.priceChange1hr,
+            m.priceChange24hr,
+            m.oneDayPriceChange,
+            m.priceChange
+          ) * 100;
+          const volume = firstNumber(m.volume24hr, m.volume24hrClob, m.volumeNum, m.volume);
+          const liquidity = firstNumber(m.liquidityNum, m.liquidityClob, m.liquidity);
+          const days = daysUntil(m.endDate);
+          const closeLabel = days < 1 ? Math.max(1, Math.round(days * 24)) + "h" : Math.round(days) + "d";
+          const mapped = {
+            title: m.question,
+            cat: inferCategory(m),
+            prob: Math.round(Math.max(0, Math.min(1, yesPrice)) * 100),
+            move: Number.isFinite(move) && Math.abs(move) < 100 ? move : 0,
+            vol: volume,
+            liq: liquidity,
+            liquidity,
+            tag: inferCategory(m).toUpperCase(),
+            signal: m.enableOrderBook ? "live orderbook" : "public data",
+            close: closeLabel,
+            daysToClose: days,
+            endDate: m.endDate
+          };
+          mapped.radarScore = calculateRadarScore(mapped);
+          return mapped;
+        })
+        .filter(m => m.vol > 0 || m.liquidity > 0)
+        .slice(0, 40);
+
+      document.getElementById("kpiMarkets").textContent = String(markets.length);
+      const topMove = markets.reduce((max, m) => Math.max(max, Math.abs(m.move || 0)), 0);
+      document.getElementById("kpiMove").textContent = (topMove ? "+" + topMove.toFixed(1) : "Live") + (topMove ? "%" : "");
+      const best = markets.reduce((top, m) => (m.radarScore || 0) > (top.radarScore || 0) ? m : top, markets[0] || {});
+      if (best.title) {
+        document.getElementById("detailTitle").textContent = best.title;
+        document.getElementById("detailTag").textContent = best.tag;
+        document.getElementById("detailLiq").textContent = money(best.liq ?? best.liquidity);
+        document.getElementById("detailVol").textContent = money(best.vol);
+        document.getElementById("detailClose").textContent = best.close || "n/a";
+        document.getElementById("detailScore").textContent = best.radarScore || 0;
+      }
+      renderMarkets();
+    }
+
+    async function loadLiveWhales() {
+      const data = await fetchJsonWithFallback(
+        "/api/whales?limit=10&threshold=1000",
+        "https://data-api.polymarket.com/trades?limit=100&takerOnly=false"
+      );
+
+      const rows = Array.isArray(data) ? data : [];
+      whales = rows
+        .map((trade, index) => {
+          const notional = Number(trade.usdcSize || (Number(trade.size || 0) * Number(trade.price || 0)));
+          return {
+            wallet: formatWallet(trade.proxyWallet),
+            amount: money(notional),
+            market: trade.title || "Unknown market",
+            action: `${trade.side || "TRADE"} ${trade.outcome || ""} at ${(Number(trade.price || 0) * 100).toFixed(1)}%`,
+            score: Math.max(60, 96 - index * 4)
+          };
+        })
+        .filter(item => item.amount !== "$0k")
+        .slice(0, 10);
+
+      document.getElementById("kpiWhales").textContent = String(whales.length);
+      renderWhales();
+    }
+
+    async function loadLiveData() {
+      const status = document.getElementById("sourceStatus");
+      status.textContent = "Loading live public Polymarket data...";
+      try {
+        await Promise.all([loadLiveMarkets(), loadLiveWhales()]);
+        const stamp = new Date().toLocaleTimeString();
+        status.textContent = "Live public data loaded from Gamma API and recent trade data at " + stamp + ".";
+      } catch (error) {
+        status.textContent = "Live API unavailable in this browser. Sample data remains active. " + error.message;
+      }
+    }
+
+    function renderNews() {
+      document.getElementById("newsRows").innerHTML = news.map(n => `
+        <tr>
+          <td>${n.event}</td>
+          <td><span class="chip">${n.key}</span></td>
+          <td class="${n.move.startsWith("-") ? "red" : "green"}">${n.move}</td>
+          <td>${n.summary}</td>
+        </tr>
+      `).join("");
+    }
+
+    function renderWalletRows() {
+      document.getElementById("walletRows").innerHTML = walletRows.map(r => `
+        <tr>
+          <td>${r[0]}</td>
+          <td>${r[1]}</td>
+          <td class="${r[2].startsWith("-") ? "red" : "green"}">${r[2]}</td>
+          <td>${r[3]}</td>
+        </tr>
+      `).join("");
+    }
+
+    function classifyMarket(title) {
+      const text = String(title || "").toLowerCase();
+      if (/(bitcoin|btc|ethereum|eth|crypto|solana|xrp|doge|binance)/.test(text)) return "Crypto";
+      if (/(trump|biden|election|senate|president|politic|congress|candidate|iran)/.test(text)) return "Politics";
+      if (/(fed|rate|inflation|cpi|oil|gdp|recession|economy|tariff)/.test(text)) return "Macro";
+      if (/(nba|nfl|mlb|fifa|world cup|lakers|soccer|tennis|ufc|sports)/.test(text)) return "Sports";
+      return "Other";
+    }
+
+    function signedMoney(n) {
+      n = Number(n || 0);
+      const sign = n >= 0 ? "+" : "-";
+      return sign + money(Math.abs(n));
+    }
+
+    function renderWalletAnalysis(positions, closed, activity) {
+      const allPositions = [...positions, ...closed];
+      const pnl = allPositions.reduce((sum, p) => sum + Number(p.cashPnl ?? p.realizedPnl ?? 0), 0);
+      const wins = allPositions.filter(p => Number(p.cashPnl ?? p.realizedPnl ?? 0) > 0).length;
+      const winRate = allPositions.length ? wins / allPositions.length * 100 : 0;
+      const activeValue = positions.reduce((sum, p) => sum + Number(p.currentValue || 0), 0);
+      const riskGrade = activeValue > 500000 ? "C+" : activeValue > 150000 ? "B" : "A-";
+
+      const pnlEl = document.getElementById("walletPnl");
+      pnlEl.textContent = signedMoney(pnl);
+      pnlEl.className = pnl >= 0 ? "green" : "red";
+      document.getElementById("walletWin").textContent = winRate.toFixed(1) + "%";
+      document.getElementById("walletRisk").textContent = riskGrade;
+
+      const grouped = new Map();
+      allPositions.forEach(p => {
+        const cat = classifyMarket(p.title);
+        const item = grouped.get(cat) || { positions: 0, pnl: 0, best: "", bestPnl: -Infinity };
+        const itemPnl = Number(p.cashPnl ?? p.realizedPnl ?? 0);
+        item.positions += 1;
+        item.pnl += itemPnl;
+        if (itemPnl > item.bestPnl) {
+          item.bestPnl = itemPnl;
+          item.best = p.title || "Unknown market";
+        }
+        grouped.set(cat, item);
+      });
+
+      const rows = [...grouped.entries()].sort((a, b) => Math.abs(b[1].pnl) - Math.abs(a[1].pnl));
+      document.getElementById("walletRows").innerHTML = rows.length ? rows.map(([cat, item]) => `
+        <tr>
+          <td>${cat}</td>
+          <td>${item.positions}</td>
+          <td class="${item.pnl >= 0 ? "green" : "red"}">${signedMoney(item.pnl)}</td>
+          <td>${item.best}</td>
+        </tr>
+      `).join("") : `<tr><td colspan="4">No public position data found.</td></tr>`;
+
+      document.getElementById("activityRows").innerHTML = activity.length ? activity.slice(0, 8).map(a => `
+        <tr>
+          <td>${a.type || "activity"}</td>
+          <td>${a.title || "Unknown market"}</td>
+          <td class="${a.side === "BUY" ? "green" : "red"}">${a.side || a.outcome || "-"}</td>
+          <td>${money(a.usdcSize || a.size || 0)}</td>
+        </tr>
+      `).join("") : `<tr><td colspan="4">No recent public activity found.</td></tr>`;
+    }
+
+    async function analyzeWalletLive(wallet) {
+      const status = document.getElementById("walletStatus");
+      if (!/^0x[a-fA-F0-9]{40}$/.test(wallet)) {
+        status.textContent = "Invalid wallet address. Use a full 0x public wallet address.";
+        return;
+      }
+      status.textContent = "Loading public wallet positions and activity...";
+
+      try {
+        const [positions, closed, activity] = await Promise.all([
+          fetchJsonWithFallback(`/api/positions?user=${wallet}&limit=80`, `https://data-api.polymarket.com/positions?user=${wallet}&limit=80`),
+          fetchJsonWithFallback(`/api/closed-positions?user=${wallet}&limit=80`, `https://data-api.polymarket.com/closed-positions?user=${wallet}&limit=80`),
+          fetchJsonWithFallback(`/api/activity?user=${wallet}&limit=30`, `https://data-api.polymarket.com/activity?user=${wallet}&limit=30`)
+        ]);
+        renderWalletAnalysis(
+          Array.isArray(positions) ? positions : [],
+          Array.isArray(closed) ? closed : [],
+          Array.isArray(activity) ? activity : []
+        );
+        status.textContent = "Live public wallet data loaded. No wallet connection or signing was used.";
+      } catch (error) {
+        status.textContent = "Wallet API unavailable. Sample scorecard remains active. " + error.message;
+      }
+    }
+
+    document.querySelectorAll(".nav-btn").forEach(btn => {
+      btn.addEventListener("click", () => {
+        document.querySelectorAll(".nav-btn").forEach(b => b.classList.remove("active"));
+        document.querySelectorAll(".view").forEach(v => v.classList.remove("active"));
+        btn.classList.add("active");
+        document.getElementById(btn.dataset.view).classList.add("active");
+      });
+    });
+
+    document.querySelectorAll(".tab").forEach(tab => {
+      tab.addEventListener("click", () => {
+        document.querySelectorAll(".tab").forEach(t => t.classList.remove("active"));
+        tab.classList.add("active");
+        currentSort = tab.dataset.sort;
+        renderMarkets();
+      });
+    });
+
+    document.getElementById("searchInput").addEventListener("input", renderMarkets);
+    document.getElementById("categoryFilter").addEventListener("change", renderMarkets);
+    document.getElementById("refreshBtn").addEventListener("click", () => {
+      loadLiveData();
+    });
+
+    document.getElementById("analyzeBtn").addEventListener("click", () => {
+      const input = document.getElementById("walletInput").value.trim() || "0x8f3a...19cd";
+      analyzeWalletLive(input);
+    });
+
+    renderMarkets();
+    renderWhales();
+    renderNews();
+    renderWalletRows();
+    document.getElementById("activityRows").innerHTML = `<tr><td>TRADE</td><td>BTC 15m intervals</td><td class="green">BUY</td><td>$64k</td></tr>`;
+    loadLiveData();
+    analyzeWalletLive(document.getElementById("walletInput").value.trim());
+  </script>
+</body>
+</html>

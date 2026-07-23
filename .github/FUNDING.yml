@@ -1,0 +1,15 @@
+# Replace these placeholders after enabling your funding accounts.
+#
+# Safest default:
+# - Use GitHub Sponsors first.
+# - Use Buy Me a Coffee or Ko-fi as optional creator-support links.
+# - Avoid publishing a personal crypto wallet address in the README.
+#
+# GitHub docs:
+# https://docs.github.com/en/repositories/managing-your-repositorys-settings-and-features/customizing-your-repository/displaying-a-sponsor-button-in-your-repository
+
+# github: [your-github-username]
+# ko_fi: your-kofi-name
+# custom:
+#   - https://www.buymeacoffee.com/your-name
+

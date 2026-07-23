@@ -1,0 +1,44 @@
+﻿[
+    {
+        "proxyWallet":  "0x6046cd5f7fbb585eb088b18071a5007677e287f8",
+        "side":  "BUY",
+        "outcome":  "Under",
+        "title":  "Games Total: O/U 2.5",
+        "slug":  "cs2-tl1-vit-2026-07-24-total-games-2pt5",
+        "timestamp":  1784832399,
+        "name":  "jhnsfws",
+        "pseudonym":  "Probable-Stepaunt",
+        "price":  0.73,
+        "size":  2565.73,
+        "usdcSize":  1872.9829,
+        "transactionHash":  "0xb6b81c69530cece8ae37964330e16fa3bd1daf28469eda362c00cfd940922934"
+    },
+    {
+        "proxyWallet":  "0x2005d16a84ceefa912d4e380cd32e7ff827875ea",
+        "side":  "BUY",
+        "outcome":  "Amanda Carolina Nava Elkin",
+        "title":  "ITF Huamantla: Carolina Alonso vs Amanda Carolina Nava Elkin",
+        "slug":  "itf-alon-elkin-2026-07-23",
+        "timestamp":  1784832393,
+        "name":  "RN1",
+        "pseudonym":  "Scary-Edible",
+        "price":  0.62,
+        "size":  1795.58,
+        "usdcSize":  1113.2595999999999,
+        "transactionHash":  "0x3ed888fd3d6c74283a662fa0e2b7e6235e3f99cb612c060071efb780b02eb9d0"
+    },
+    {
+        "proxyWallet":  "0xe91171f655be1568e4c63f29663c0028649e3d4e",
+        "side":  "SELL",
+        "outcome":  "Amanda Carolina Nava Elkin",
+        "title":  "ITF Huamantla: Carolina Alonso vs Amanda Carolina Nava Elkin",
+        "slug":  "itf-alon-elkin-2026-07-23",
+        "timestamp":  1784832393,
+        "name":  "0xE91171f655bE1568e4c63f29663c0028649e3d4e-1765651946286",
+        "pseudonym":  "Yawning-Chicken",
+        "price":  0.62,
+        "size":  1795.58,
+        "usdcSize":  1113.2595999999999,
+        "transactionHash":  "0x3ed888fd3d6c74283a662fa0e2b7e6235e3f99cb612c060071efb780b02eb9d0"
+    }
+]
