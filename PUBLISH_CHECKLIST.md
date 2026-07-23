@@ -10,6 +10,8 @@
 - [ ] Confirm README screenshot renders
 - [ ] Confirm no private keys, API keys, wallet secrets, or `.env` files exist
 - [ ] Confirm safety boundary is visible in README
+- [ ] Confirm `LEGAL.md` is visible and linked from README
+- [ ] Confirm GitHub Actions CI passes
 - [ ] Configure `.github/FUNDING.yml` only after GitHub Sponsors / creator-support links are ready
 - [ ] Do not publish a personal crypto wallet address at launch
 

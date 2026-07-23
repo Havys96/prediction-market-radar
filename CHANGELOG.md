@@ -25,6 +25,8 @@ Initial public-ready MVP.
 - Windows `run.bat`
 - Windows `publish.ps1`
 - Windows `update_snapshot.ps1`
+- Legal and safety notice
+- GitHub Actions smoke test
 
 ### Safety Boundary
 
@@ -44,4 +46,3 @@ Initial public-ready MVP.
 - Telegram and Discord alerts are documented but not implemented.
 - Wallet analysis depends on public Data API availability.
 - Snapshot cache can become stale until refreshed.
-

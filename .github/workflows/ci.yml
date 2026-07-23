@@ -1,0 +1,39 @@
+name: CI
+
+on:
+  push:
+  pull_request:
+
+jobs:
+  smoke-test:
+    runs-on: ubuntu-latest
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v4
+
+      - name: Set up Python
+        uses: actions/setup-python@v5
+        with:
+          python-version: "3.12"
+
+      - name: Validate files
+        run: |
+          test -f index.html
+          test -f server.py
+          test -f README.md
+          test -f LEGAL.md
+          test -f .github/FUNDING.yml
+          test -f data/markets.json
+          test -f docs/screenshot-desktop.png
+
+      - name: Check Python syntax
+        run: |
+          python -m py_compile server.py
+
+      - name: Check safety boundary text
+        run: |
+          grep -qi "No wallet connection" README.md
+          grep -qi "No order execution" README.md
+          grep -qi "Donations are optional" README.md
+          grep -qi "read-only" LEGAL.md
+

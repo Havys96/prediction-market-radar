@@ -151,6 +151,8 @@ This project is for research and education only.
 
 It does not place trades, connect wallets, provide financial advice, encourage betting, or bypass geographic restrictions.
 
+See `LEGAL.md` for the full legal and safety notice.
+
 ## Support
 
 If this project saves you time, you can support open-source development through GitHub Sponsors, Buy Me a Coffee, or Ko-fi.
