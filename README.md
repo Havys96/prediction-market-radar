@@ -1,18 +1,39 @@
 # Prediction Market Radar
 
+![Version](https://img.shields.io/badge/version-v0.1.0-5db7ff)
+![License](https://img.shields.io/badge/license-MIT-33c481)
+![Wallet](https://img.shields.io/badge/wallet_connection-none-f0bd45)
+![Execution](https://img.shields.io/badge/order_execution-none-f25d5d)
+
 Read-only intelligence dashboard for prediction markets.
 
-Find where probability, volume, and public wallet activity are moving without connecting a wallet or placing trades.
+Prediction Market Radar gives you one local screen for market movers, probability shifts, whale-sized public trades, and public wallet research without connecting a wallet or placing trades.
 
 Prediction Market Radar helps you answer:
 
 - What markets are moving right now?
-- Which public wallets are active?
-- Where are large trades appearing?
+- Where are large public trades appearing?
+- Which public wallets are active or profitable?
 - Which markets deserve research attention first?
-- Is a wallet actually profitable, or just noisy?
+- Is a wallet actually useful to study, or just noisy?
 
 > Research dashboard only. No wallet connection, no private keys, no order execution, no trading or betting advice.
+
+## Why People Might Use It
+
+Prediction markets are fragmented. A researcher often has to open market pages, wallet pages, leaderboards, trade feeds, and notes just to understand what changed.
+
+This project compresses that loop into a small local dashboard:
+
+| Problem | What the dashboard shows |
+| --- | --- |
+| Too many markets | Ranked market list with Radar Score |
+| Hard to spot momentum | Probability, volume, liquidity, and close-time signals |
+| Whale trades are noisy | Recent large public trades in one panel |
+| Wallets are hard to judge | Public wallet PnL, win rate, risk grade, positions, and activity |
+| API outages happen | Snapshot cache fallback under `data/` |
+
+It is built as a public-data research tool, not a bot, not a signal service, and not a betting product.
 
 ## Screenshot
 
@@ -24,23 +45,17 @@ Mobile:
 
 ![Prediction Market Radar mobile screenshot](docs/screenshot-mobile.png)
 
-## What It Does
+## Features
 
 - Shows active Polymarket markets from the public Gamma API
 - Ranks markets by Radar Score
 - Tracks recent large public trades
 - Analyzes public wallet positions, closed positions, and activity
 - Displays estimated PnL, win rate, category breakdown, and recent trades
+- Includes local snapshot fallback data
+- Includes a local smoke test and GitHub Actions CI
 - Works locally with a tiny Python proxy server
 - Requires no API key
-
-## Why This Exists
-
-Prediction markets are noisy. A user often needs to open market pages, wallet pages, leaderboards, trade feeds, and news tabs just to understand what changed.
-
-This project compresses that research loop into one local dashboard.
-
-The goal is not to tell users what to buy. The goal is to surface public information faster and more clearly.
 
 ## What It Does Not Do
 
@@ -63,6 +78,7 @@ Requirements:
 Run:
 
 ```bash
+python smoke_test.py
 python server.py
 ```
 
@@ -70,12 +86,6 @@ Open:
 
 ```text
 http://127.0.0.1:8765
-```
-
-Optional local check:
-
-```bash
-python smoke_test.py
 ```
 
 On Windows, you can also run:

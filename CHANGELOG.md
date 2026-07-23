@@ -28,6 +28,7 @@ Initial public-ready MVP.
 - Legal and safety notice
 - GitHub Actions smoke test
 - Local `smoke_test.py`
+- Higher-conversion README intro with badges, feature table, and clearer positioning
 
 ### Safety Boundary
 
