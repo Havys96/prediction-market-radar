@@ -20,6 +20,7 @@
 Run:
 
 ```bash
+python smoke_test.py
 python server.py
 ```
 
@@ -44,15 +45,19 @@ Check:
 1. Create GitHub repository.
 2. Upload all files in this folder.
 3. Add screenshots from `docs/`.
-4. Create first release: `v0.1.0`.
-5. Use `LAUNCH.md` for X, Reddit, Discord, and release notes.
-6. Pin the repo on GitHub profile if the initial response is good.
+4. Push release tag `v0.1.0`.
+5. Create first GitHub release from tag `v0.1.0`.
+6. Confirm GitHub Actions CI passes.
+7. Use `LAUNCH.md` for X, Reddit, Discord, and release notes.
+8. Pin the repo on GitHub profile if the initial response is good.
 
 Shortcut:
 
 ```powershell
 .\publish.ps1 -RepoUrl "https://github.com/YOUR_NAME/prediction-market-radar.git"
 ```
+
+The shortcut pushes `main` and the `v0.1.0` tag.
 
 ## First 30-Day Goal
 

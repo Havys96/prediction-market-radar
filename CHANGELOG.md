@@ -29,6 +29,8 @@ Initial public-ready MVP.
 - GitHub Actions smoke test
 - Local `smoke_test.py`
 - Higher-conversion README intro with badges, feature table, and clearer positioning
+- Launch playbook with first-week feedback plan
+- Publish script now pushes the `v0.1.0` tag
 
 ### Safety Boundary
 

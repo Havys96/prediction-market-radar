@@ -32,6 +32,11 @@ From this folder:
 
 If Git asks for login, use your GitHub browser login or a GitHub personal access token.
 
+The script pushes:
+
+- `main`
+- tag `v0.1.0`
+
 ## 4. Configure Funding
 
 After GitHub Sponsors or creator-support links are ready, edit:
@@ -58,8 +63,9 @@ Check:
 - Repo description is set
 - Topics are set
 - Release `v0.1.0` is created
+- GitHub Actions CI passes
+- `v0.1.0` tag is visible on GitHub
 
 ## 6. First Public Post
 
 Use `LAUNCH.md`.
-

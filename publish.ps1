@@ -31,6 +31,7 @@ if ($status) {
 
 git branch -M main
 git push -u origin main
+git push origin v0.1.0
 
 Write-Output "Published to $RepoUrl"
-
+Write-Output "Pushed release tag v0.1.0"

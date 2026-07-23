@@ -113,6 +113,78 @@ Known limitations:
 - no browser/Telegram/Discord alerts yet
 - wallet analysis depends on public Data API availability
 
+## Launch Order
+
+1. Publish the GitHub repo.
+2. Confirm README screenshots render.
+3. Confirm CI passes.
+4. Create release `v0.1.0` from the pushed tag.
+5. Add a short post on X.
+6. Share in one relevant builder or data-analysis community.
+7. Wait for feedback before adding execution, alerts, or paid features.
+
+Do not launch it as a money-making tool. Launch it as a public-data research dashboard.
+
+## First 7 Days
+
+Day 1:
+
+- Publish repo
+- Pin repo on profile
+- Post one short X post
+- Ask for feedback on scoring, data sources, and UX
+
+Day 2-3:
+
+- Reply to every setup question
+- Turn repeated questions into README fixes
+- Label issues as `bug`, `data-source`, `ux`, or `feature`
+
+Day 4-5:
+
+- Ship one small improvement based on real feedback
+- Avoid adding risky trading/betting language
+- Keep the read-only safety boundary visible
+
+Day 6-7:
+
+- Write a short update post with what changed
+- Ask users which feature matters most:
+  - watchlist persistence
+  - browser notifications
+  - CSV export
+  - better probability-change history
+  - Telegram/Discord descriptive alerts
+
+## Feedback Questions
+
+Use these when posting or replying:
+
+- Which panel is most useful: Market Radar, Whale Watch, or Wallet Scorecard?
+- What data source should be added next?
+- Is Radar Score easy to understand?
+- What would make this worth starring?
+- What would make this worth sponsoring as an open-source tool?
+
+## Feature Priority After Launch
+
+Do first if users ask for it:
+
+1. Watchlist persistence
+2. CSV export
+3. Better probability-change history
+4. Browser notifications
+5. Telegram/Discord descriptive alerts
+
+Do not add:
+
+- order execution
+- copy trading
+- wallet connection
+- private groups selling entries
+- profit-sharing donation language
+- geo-bypass instructions
+
 ## Donation Copy
 
 If this project saved you time, you can support open-source development.
