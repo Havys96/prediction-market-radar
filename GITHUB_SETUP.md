@@ -34,6 +34,7 @@ From this folder:
 
 ```bash
 git init
+python smoke_test.py
 git add .
 git commit -m "Initial Prediction Market Radar MVP"
 ```

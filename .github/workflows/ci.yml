@@ -30,10 +30,13 @@ jobs:
         run: |
           python -m py_compile server.py
 
+      - name: Run smoke test
+        run: |
+          python smoke_test.py
+
       - name: Check safety boundary text
         run: |
           grep -qi "No wallet connection" README.md
           grep -qi "No order execution" README.md
           grep -qi "Donations are optional" README.md
           grep -qi "read-only" LEGAL.md
-

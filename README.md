@@ -72,6 +72,12 @@ Open:
 http://127.0.0.1:8765
 ```
 
+Optional local check:
+
+```bash
+python smoke_test.py
+```
+
 On Windows, you can also run:
 
 ```text

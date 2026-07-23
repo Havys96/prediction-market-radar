@@ -27,6 +27,7 @@ Initial public-ready MVP.
 - Windows `update_snapshot.ps1`
 - Legal and safety notice
 - GitHub Actions smoke test
+- Local `smoke_test.py`
 
 ### Safety Boundary
 
