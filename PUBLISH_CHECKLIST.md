@@ -46,6 +46,12 @@ Check:
 5. Use `LAUNCH.md` for X, Reddit, Discord, and release notes.
 6. Pin the repo on GitHub profile if the initial response is good.
 
+Shortcut:
+
+```powershell
+.\publish.ps1 -RepoUrl "https://github.com/YOUR_NAME/prediction-market-radar.git"
+```
+
 ## First 30-Day Goal
 
 - 50 GitHub stars

@@ -46,6 +46,12 @@ git remote add origin https://github.com/YOUR_NAME/prediction-market-radar.git
 git push -u origin main
 ```
 
+On Windows, you can use the included helper:
+
+```powershell
+.\publish.ps1 -RepoUrl "https://github.com/YOUR_NAME/prediction-market-radar.git"
+```
+
 ## First Release
 
 Tag:
@@ -87,4 +93,3 @@ Market it as:
 - wallet analytics
 - market intelligence
 - open-source starter
-
