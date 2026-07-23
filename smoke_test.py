@@ -10,6 +10,8 @@ ROOT = Path(__file__).resolve().parent
 
 REQUIRED_FILES = [
     "index.html",
+    "package.json",
+    "build-static.js",
     "server.py",
     "README.md",
     "LEGAL.md",
