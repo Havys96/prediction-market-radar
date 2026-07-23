@@ -31,6 +31,7 @@ Initial public-ready MVP.
 - Higher-conversion README intro with badges, feature table, and clearer positioning
 - Launch playbook with first-week feedback plan
 - Publish script now pushes the `v0.1.0` tag
+- GitHub pull request template and data-source issue template
 
 ### Safety Boundary
 

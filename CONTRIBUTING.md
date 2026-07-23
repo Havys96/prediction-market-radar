@@ -34,6 +34,7 @@ Please do not add:
 Run:
 
 ```bash
+python smoke_test.py
 python server.py
 ```
 
@@ -54,6 +55,17 @@ Refresh snapshot data on Windows:
 - [ ] No secrets, private keys, API keys, or wallet credentials
 - [ ] No trading/order execution behavior
 - [ ] README safety boundary still applies
+- [ ] `python smoke_test.py` passes
 - [ ] App still runs with `python server.py`
 - [ ] Screenshot or docs updated if UI changed
 
+## Issue Triage
+
+Use labels consistently:
+
+- `bug` for broken dashboard behavior or parsing errors
+- `data-source` for public endpoint or data-quality requests
+- `enhancement` for read-only feature ideas
+- `documentation` for setup, README, or launch copy improvements
+
+Close or redirect requests for wallet connection, order execution, copy-trading, betting advice, financial advice, or geographic restriction bypasses.
