@@ -42,6 +42,7 @@ It helps track public Polymarket data without connecting a wallet or placing tra
 - active market list
 - Radar Score
 - anomaly detector
+- 15m/1h/24h probability history
 - narrative tracker
 - public large-trade feed
 - wallet PnL scorecard
@@ -167,9 +168,9 @@ Day 6-7:
 
 - Write a short update post with what changed
 - Ask users which feature matters most:
-  - better probability-change history
   - demo GIF or short video
   - Telegram/Discord descriptive alerts
+  - saved report archive
 
 ## Feedback Questions
 
@@ -185,11 +186,11 @@ Use these when posting or replying:
 
 Do first if users ask for it:
 
-1. Better probability-change history
-2. Demo GIF or short video
-3. Telegram/Discord descriptive alerts
-4. Additional public data sources
-5. Saved report archive
+1. Demo GIF or short video
+2. Telegram/Discord descriptive alerts
+3. Additional public data sources
+4. Saved report archive
+5. Saved local history management
 
 Do not add:
 

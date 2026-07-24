@@ -46,6 +46,8 @@ Initial public-ready MVP.
 - Demo walkthrough checklist and refreshed README launch positioning
 - Updated desktop and mobile screenshots for the current interface
 - CSV export for markets, large public trades, Wallet Alpha candidates, and local alert observations
+- Server-side 15m, 1h, and 24h probability-change history calculations
+- Markets CSV and Markdown report now include history-window probability deltas
 
 ### Safety Boundary
 

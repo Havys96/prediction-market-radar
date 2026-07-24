@@ -1075,7 +1075,8 @@
           anomalyScore: anomaly.score,
           anomalyReasons: anomaly.reasons,
           historyProbDelta: Number(anomaly.history.probDelta || 0),
-          historyVolumeDelta: Number(anomaly.history.volumeDelta || 0)
+          historyVolumeDelta: Number(anomaly.history.volumeDelta || 0),
+          historyWindows: anomaly.history.windows || {}
         };
       });
     }
@@ -1289,7 +1290,7 @@
               <strong>${escapeHtml(item.title)}</strong>
               <span class="${item.probDelta >= 0 ? "green" : "red"}">${item.probDelta >= 0 ? "+" : ""}${item.probDelta.toFixed(1)} pts</span>
             </div>
-            <span class="label">Server history: probability ${item.beforeProb.toFixed(0)}% to ${item.prob.toFixed(0)}% / volume ${money(item.beforeVolume)} to ${money(item.volume)}</span>
+            <span class="label">${escapeHtml(item.historyLabel || `Server history: probability ${item.beforeProb.toFixed(0)}% to ${item.prob.toFixed(0)}% / volume ${money(item.beforeVolume)} to ${money(item.volume)}`)}</span>
           </div>
         `).join("");
         return;
@@ -1554,12 +1555,15 @@
       lines.push("## Top Radar Markets");
       lines.push("");
       lines.push(markdownTable(
-        ["Market", "Category", "Probability", "Move", "Volume", "Liquidity", "Radar", "Anomaly"],
+        ["Market", "Category", "Probability", "Move", "15m", "1h", "24h", "Volume", "Liquidity", "Radar", "Anomaly"],
         topMarkets.map(m => [
           m.title,
           m.cat,
           `${Number(m.prob || 0).toFixed(0)}%`,
           `${Number(m.move || 0).toFixed(1)} pts`,
+          `${Number(m.historyWindows?.["15m"]?.probDelta || 0).toFixed(1)} pts`,
+          `${Number(m.historyWindows?.["1h"]?.probDelta || 0).toFixed(1)} pts`,
+          `${Number(m.historyWindows?.["24h"]?.probDelta || 0).toFixed(1)} pts`,
           money(m.vol),
           money(m.liq || m.liquidity),
           m.radarScore,
@@ -1681,12 +1685,15 @@
           Number(m.liq || m.liquidity || 0),
           Number(m.radarScore || 0),
           Number(m.anomalyScore || 0),
+          Number(m.historyWindows?.["15m"]?.probDelta || 0).toFixed(2),
+          Number(m.historyWindows?.["1h"]?.probDelta || 0).toFixed(2),
+          Number(m.historyWindows?.["24h"]?.probDelta || 0).toFixed(2),
           (m.anomalyReasons || []).join(" / "),
           m.signal,
           m.close
         ]);
       return toCsv(
-        ["market", "category", "tag", "probability_pct", "move_pts", "volume", "liquidity", "radar_score", "anomaly_score", "anomaly_reasons", "signal", "close"],
+        ["market", "category", "tag", "probability_pct", "move_pts", "volume", "liquidity", "radar_score", "anomaly_score", "history_15m_pts", "history_1h_pts", "history_24h_pts", "anomaly_reasons", "signal", "close"],
         rows
       );
     }
@@ -1785,8 +1792,45 @@
       });
     }
 
+    function historyWindowSummary(item) {
+      const windows = item.windows || {};
+      const parts = ["15m", "1h", "24h"].map(label => {
+        const row = windows[label];
+        if (!row) return `${label} n/a`;
+        const value = Number(row.probDelta || 0);
+        return `${label} ${value >= 0 ? "+" : ""}${value.toFixed(1)} pts`;
+      });
+      return `Server history: ${parts.join(" / ")} / volume best ${money(Math.abs(Number(item.volumeDelta || 0)))}`;
+    }
+
+    function normalizeHistoryChange(item) {
+      return {
+        title: item.title,
+        prob: Number(item.prob || 0),
+        beforeProb: Number((item.windows?.["1h"] || item.windows?.["15m"] || {}).beforeProb || item.prob || 0),
+        volume: Number(item.volume || 0),
+        beforeVolume: Number((item.windows?.["1h"] || item.windows?.["15m"] || {}).beforeVolume || item.volume || 0),
+        probDelta: Number(item.probDelta || 0),
+        volumeDelta: Number(item.volumeDelta || 0),
+        windows: item.windows || {},
+        historyLabel: historyWindowSummary(item)
+      };
+    }
+
     async function loadServerHistoryChanges() {
       try {
+        const changesResponse = await fetch("/api/history/changes", { cache: "no-store" });
+        if (changesResponse.ok) {
+          const data = await changesResponse.json();
+          const rows = Array.isArray(data.markets) ? data.markets : [];
+          serverHistoryChanges = rows
+            .map(normalizeHistoryChange)
+            .filter(item => Math.abs(item.probDelta) >= 1 || Math.abs(item.volumeDelta) >= 10000)
+            .sort((a, b) => Math.abs(b.probDelta) - Math.abs(a.probDelta));
+          serverHistoryMap = new Map(serverHistoryChanges.map(item => [marketKey(item.title), item]));
+          return;
+        }
+
         const response = await fetch("/api/history?limit=2", { cache: "no-store" });
         if (!response.ok) return;
         const history = await response.json();

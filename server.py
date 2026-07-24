@@ -29,7 +29,13 @@ CACHE_FILES = {
 
 HISTORY_FILE = ROOT / "data" / "history.json"
 HISTORY_LOCK = threading.Lock()
-MAX_HISTORY_SNAPSHOTS = 96
+HISTORY_MIN_INTERVAL_SECONDS = 300
+MAX_HISTORY_SNAPSHOTS = 576
+HISTORY_WINDOWS = {
+    "15m": 15 * 60,
+    "1h": 60 * 60,
+    "24h": 24 * 60 * 60,
+}
 
 WALLET_ENDPOINTS = {
     "/api/positions": "positions",
@@ -50,6 +56,9 @@ class Handler(BaseHTTPRequestHandler):
             return
         if parsed.path == "/api/history":
             self.send_history(parsed.query)
+            return
+        if parsed.path == "/api/history/changes":
+            self.send_history_changes()
             return
         if parsed.path == "/api/whales":
             self.proxy_whales(parsed.query)
@@ -176,6 +185,9 @@ class Handler(BaseHTTPRequestHandler):
         history = read_history()
         self.send_json(history[-int(limit):])
 
+    def send_history_changes(self) -> None:
+        self.send_json(build_history_changes(read_history()))
+
     def fetch_json(self, url: str):
         req = urllib.request.Request(url, headers={"User-Agent": "PredictionMarketRadar/0.1"})
         with urllib.request.urlopen(req, timeout=12) as response:
@@ -287,7 +299,7 @@ def append_market_history(markets) -> None:
     }
     with HISTORY_LOCK:
         history = read_history()
-        if history and int(history[-1].get("capturedAt", 0)) > entry["capturedAt"] - 45:
+        if history and int(history[-1].get("capturedAt", 0)) > entry["capturedAt"] - HISTORY_MIN_INTERVAL_SECONDS:
             history[-1] = entry
         else:
             history.append(entry)
@@ -296,6 +308,95 @@ def append_market_history(markets) -> None:
             json.dumps(history[-MAX_HISTORY_SNAPSHOTS:], ensure_ascii=False, indent=2),
             encoding="utf-8",
         )
+
+
+def find_baseline_snapshot(history: list[dict[str, object]], latest_time: int, window_seconds: int) -> dict[str, object] | None:
+    target = latest_time - window_seconds
+    candidates = [
+        item for item in history
+        if isinstance(item, dict) and int(first_number(item.get("capturedAt"))) <= target
+    ]
+    if candidates:
+        return max(candidates, key=lambda item: int(first_number(item.get("capturedAt"))))
+    older = [
+        item for item in history
+        if isinstance(item, dict) and int(first_number(item.get("capturedAt"))) < latest_time
+    ]
+    if older:
+        return min(older, key=lambda item: int(first_number(item.get("capturedAt"))))
+    return None
+
+
+def build_history_changes(history: list[dict[str, object]]) -> dict[str, object]:
+    valid = [
+        item for item in history
+        if isinstance(item, dict) and isinstance(item.get("markets"), list)
+    ]
+    if not valid:
+        return {"windows": list(HISTORY_WINDOWS.keys()), "markets": []}
+
+    valid.sort(key=lambda item: int(first_number(item.get("capturedAt"))))
+    latest = valid[-1]
+    latest_time = int(first_number(latest.get("capturedAt")))
+    baselines = {
+        label: find_baseline_snapshot(valid, latest_time, seconds)
+        for label, seconds in HISTORY_WINDOWS.items()
+    }
+    baseline_maps = {
+        label: {
+            str(row.get("key")): row
+            for row in baseline.get("markets", [])
+            if isinstance(row, dict) and row.get("key")
+        } if baseline else {}
+        for label, baseline in baselines.items()
+    }
+
+    rows = []
+    for now in latest.get("markets", []):
+        if not isinstance(now, dict) or not now.get("key"):
+            continue
+        row = {
+            "key": now.get("key"),
+            "title": now.get("title"),
+            "prob": first_number(now.get("prob")),
+            "volume": first_number(now.get("volume")),
+            "liquidity": first_number(now.get("liquidity")),
+            "latestCapturedAt": latest_time,
+            "windows": {},
+        }
+        best_delta = 0.0
+        best_volume_delta = 0.0
+        for label, baseline_map in baseline_maps.items():
+            before = baseline_map.get(str(now.get("key")))
+            if not before:
+                continue
+            before_prob = first_number(before.get("prob"))
+            before_volume = first_number(before.get("volume"))
+            prob_delta = row["prob"] - before_prob
+            volume_delta = row["volume"] - before_volume
+            row["windows"][label] = {
+                "beforeCapturedAt": int(first_number((baselines[label] or {}).get("capturedAt"))),
+                "beforeProb": before_prob,
+                "probDelta": round(prob_delta, 2),
+                "beforeVolume": before_volume,
+                "volumeDelta": round(volume_delta, 2),
+            }
+            if abs(prob_delta) > abs(best_delta):
+                best_delta = prob_delta
+            if abs(volume_delta) > abs(best_volume_delta):
+                best_volume_delta = volume_delta
+
+        row["probDelta"] = round(best_delta, 2)
+        row["volumeDelta"] = round(best_volume_delta, 2)
+        rows.append(row)
+
+    rows.sort(key=lambda item: (abs(float(item.get("probDelta", 0))), abs(float(item.get("volumeDelta", 0)))), reverse=True)
+    return {
+        "windows": list(HISTORY_WINDOWS.keys()),
+        "latestCapturedAt": latest_time,
+        "snapshotCount": len(valid),
+        "markets": rows,
+    }
 
 
 def build_wallet_alpha_ranking(trades, limit: int) -> list[dict[str, object]]:

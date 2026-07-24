@@ -60,7 +60,7 @@ Mobile reports view:
 | Area | Included |
 | --- | --- |
 | Markets | active Polymarket markets, probability, volume, liquidity, Radar Score |
-| Anomalies | anomaly detector, server-history deltas, before/after movement log |
+| Anomalies | anomaly detector, 15m/1h/24h server-history deltas, before/after movement log |
 | Narratives | category-level attention clusters and top market summaries |
 | Watchlist | browser-stored watchlist and local daily digest |
 | Public trades | recent large public trade observations |
@@ -166,6 +166,7 @@ MVP:
 - market anomaly detector
 - narrative tracker
 - local watchlist and daily digest
+- 15m/1h/24h probability-change history
 - before/after movement log
 - server-side market history file
 - wallet scorecard
@@ -183,7 +184,6 @@ v0.1.0
 
 Planned:
 
-- better probability-change history
 - Telegram and Discord alerts
 - demo GIF or short video
 

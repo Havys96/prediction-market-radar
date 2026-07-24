@@ -27,6 +27,7 @@ Check:
 
 - `Radar Score` ranking
 - probability movement
+- 15m/1h/24h server-history probability deltas when the local server has enough snapshots
 - volume and liquidity
 - anomaly count
 - narrative clusters

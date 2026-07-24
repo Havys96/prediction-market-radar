@@ -2,6 +2,7 @@ from __future__ import annotations
 
 import json
 import py_compile
+import sys
 from pathlib import Path
 
 
@@ -58,6 +59,23 @@ def main() -> None:
             parsed = json.load(handle)
         if not isinstance(parsed, list):
             raise SystemExit(f"{data_file} must contain a JSON array")
+
+    sys.path.insert(0, str(ROOT))
+    import server  # noqa: PLC0415
+
+    changes = server.build_history_changes([
+        {"capturedAt": 0, "markets": [{"key": "m1", "title": "Market 1", "prob": 40, "volume": 1000, "liquidity": 500}]},
+        {"capturedAt": 82800, "markets": [{"key": "m1", "title": "Market 1", "prob": 45, "volume": 3000, "liquidity": 500}]},
+        {"capturedAt": 86500, "markets": [{"key": "m1", "title": "Market 1", "prob": 60, "volume": 9000, "liquidity": 500}]},
+        {"capturedAt": 87400, "markets": [{"key": "m1", "title": "Market 1", "prob": 70, "volume": 12000, "liquidity": 500}]},
+    ])
+    row = changes["markets"][0]
+    if row["windows"]["15m"]["probDelta"] != 10:
+        raise SystemExit("15m history delta calculation failed")
+    if row["windows"]["1h"]["probDelta"] != 25:
+        raise SystemExit("1h history delta calculation failed")
+    if row["windows"]["24h"]["probDelta"] != 30:
+        raise SystemExit("24h history delta calculation failed")
 
     print("Smoke test passed.")
 
