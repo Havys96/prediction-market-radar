@@ -5,7 +5,7 @@
 ![Wallet](https://img.shields.io/badge/wallet_connection-none-f0bd45)
 ![Execution](https://img.shields.io/badge/order_execution-none-f25d5d)
 
-Read-only intelligence dashboard for prediction markets.
+Read-only intelligence dashboard for prediction-market research.
 
 Prediction Market Radar gives you one local screen for market movers, probability shifts, whale-sized public trades, and public wallet research without connecting a wallet or placing trades.
 
@@ -19,6 +19,15 @@ Prediction Market Radar helps you answer:
 
 > Research dashboard only. No wallet connection, no private keys, no order execution, no trading or betting advice.
 
+## Demo Path
+
+1. Open the Radar tab to review market movers, anomaly cards, narrative clusters, and the local watchlist.
+2. Open the Wallets tab to inspect public wallet PnL, activity, and Wallet Alpha Ranking.
+3. Open the Alerts tab to configure local descriptive observation rules.
+4. Open the Reports tab to export the current research snapshot as Markdown or HTML.
+
+See `DEMO.md` for the full review checklist.
+
 ## Why People Might Use It
 
 Prediction markets are fragmented. A researcher often has to open market pages, wallet pages, leaderboards, trade feeds, and notes just to understand what changed.
@@ -31,41 +40,37 @@ This project compresses that loop into a small local dashboard:
 | Hard to spot momentum | Probability, volume, liquidity, and close-time signals |
 | Whale trades are noisy | Recent large public trades in one panel |
 | Wallets are hard to judge | Public wallet PnL, win rate, risk grade, positions, and activity |
+| Notes are scattered | Markdown and HTML research report export |
 | API outages happen | Snapshot cache fallback under `data/` |
 
 It is built as a public-data research tool, not a bot, not a signal service, and not a betting product.
 
 ## Screenshot
 
-Desktop:
+Desktop radar view:
 
 ![Prediction Market Radar desktop screenshot](docs/screenshot-desktop.png)
 
-Mobile:
+Mobile reports view:
 
 ![Prediction Market Radar mobile screenshot](docs/screenshot-mobile.png)
 
 ## Features
 
-- Shows active Polymarket markets from the public Gamma API
-- Ranks markets by Radar Score
-- Tracks recent large public trades
-- Analyzes public wallet positions, closed positions, and activity
-- Displays estimated PnL, win rate, category breakdown, and recent trades
-- Detects unusual market activity with Market Anomaly Detector
-- Blends server-side history deltas into anomaly scoring when available
-- Tracks category-level narratives and attention clusters
-- Stores a local watchlist and daily digest in the browser
-- Logs before/after market movement from server snapshots, with browser fallback
-- Scores public wallets with an Alpha Score research metric
-- Ranks public wallet activity candidates with Wallet Alpha Ranking
-- Keeps a small local `data/history.json` market history when run with `python server.py`
-- Provides local alert rules, local observation logs, and optional browser notifications
-- Exports the current research snapshot as Markdown or HTML
-- Includes local snapshot fallback data
-- Includes a local smoke test and GitHub Actions CI
-- Works locally with a tiny Python proxy server
-- Requires no API key
+| Area | Included |
+| --- | --- |
+| Markets | active Polymarket markets, probability, volume, liquidity, Radar Score |
+| Anomalies | anomaly detector, server-history deltas, before/after movement log |
+| Narratives | category-level attention clusters and top market summaries |
+| Watchlist | browser-stored watchlist and local daily digest |
+| Public trades | recent large public trade observations |
+| Wallets | public wallet positions, closed positions, activity, estimated PnL, win rate, risk grade |
+| Wallet Alpha | public wallet activity scoring and candidate ranking |
+| Alerts | local rules, local observation log, optional browser notifications |
+| Reports | Markdown and HTML research snapshot export |
+| Operations | local Python proxy, JSON snapshot fallback, smoke test, GitHub Actions CI |
+
+Requires no API key.
 
 ## What It Does Not Do
 
@@ -102,6 +107,12 @@ On Windows, you can also run:
 
 ```text
 run.bat
+```
+
+Demo checklist:
+
+```text
+DEMO.md
 ```
 
 ## Optional Snapshot Cache
@@ -160,6 +171,8 @@ MVP:
 - wallet scorecard
 - wallet alpha ranking
 - recent activity table
+- local descriptive alerts
+- Markdown and HTML research reports
 - local snapshot fallback
 
 Current version:
@@ -172,7 +185,7 @@ Planned:
 
 - better probability-change history
 - Telegram and Discord alerts
-- screenshots and demo GIF
+- demo GIF or short video
 
 ## Safety Boundary
 

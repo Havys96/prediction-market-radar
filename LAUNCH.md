@@ -2,11 +2,11 @@
 
 ## One-Line Description
 
-Prediction Market Radar is a read-only Polymarket intelligence dashboard for market movers, public whale trades, and wallet PnL analysis.
+Prediction Market Radar is a read-only prediction-market research dashboard for market movers, anomaly detection, public whale trades, wallet analysis, local alerts, and exportable research reports.
 
 ## Short GitHub Description
 
-Read-only prediction-market intelligence dashboard. Track Polymarket movers, whale trades, wallet PnL, and public activity without connecting a wallet or placing trades.
+Read-only prediction-market research dashboard. Track Polymarket movers, anomalies, public whale trades, wallet activity, local alerts, and exportable reports without connecting a wallet or placing trades.
 
 ## X Post
 
@@ -16,15 +16,17 @@ A read-only dashboard for Polymarket public data:
 
 - market movers
 - Radar Score
+- anomaly watch
 - recent large trades
 - public wallet PnL
-- category breakdown
-- recent activity
+- Wallet Alpha candidates
+- local descriptive alerts
+- Markdown/HTML research reports
 
 No wallet connection.
 No private keys.
 No order execution.
-No trading advice.
+No trading or betting advice.
 
 Open-source MVP:
 <repo link>
@@ -39,10 +41,13 @@ It helps track public Polymarket data without connecting a wallet or placing tra
 
 - active market list
 - Radar Score
+- anomaly detector
+- narrative tracker
 - public large-trade feed
 - wallet PnL scorecard
-- category breakdown
-- recent activity table
+- Wallet Alpha Ranking
+- local descriptive alerts
+- Markdown/HTML research report export
 - local snapshot fallback
 
 3/ The boundary is intentional:
@@ -51,7 +56,8 @@ It helps track public Polymarket data without connecting a wallet or placing tra
 - no wallet connection
 - no order execution
 - no copy-trading
-- no financial or betting advice
+- no financial advice
+- no betting advice
 - no geo-bypass features
 
 4/ Why?
@@ -67,6 +73,7 @@ This compresses the research loop into one local dashboard.
 - public Polymarket Gamma API
 - public Polymarket Data API
 - optional JSON snapshot cache
+- browser localStorage for watchlists, alerts, and local reports
 
 Repo:
 <repo link>
@@ -81,9 +88,13 @@ Current features:
 
 - active market dashboard
 - Radar Score ranking
+- anomaly detector
+- narrative tracker
 - public large-trade detection
 - wallet PnL scorecard
-- recent public activity
+- Wallet Alpha Ranking
+- local descriptive alerts
+- Markdown/HTML report export
 - local snapshot cache
 
 I built it as a research tool, not a trading bot. Feedback on data sources, scoring, and UX would be useful.
@@ -103,14 +114,19 @@ Initial release:
 - large-trade scanner
 - wallet scorecard
 - Radar Score
+- market anomaly detector
+- narrative tracker
+- local watchlist
+- local alert rules
+- Markdown/HTML report export
 - snapshot cache fallback
 - README safety boundary
 
 Known limitations:
 
 - probability-change history is approximate
-- no persistent watchlist yet
-- no browser/Telegram/Discord alerts yet
+- browser notifications require explicit browser permission
+- no Telegram/Discord alerts yet
 - wallet analysis depends on public Data API availability
 
 ## Launch Order
@@ -118,10 +134,11 @@ Known limitations:
 1. Publish the GitHub repo.
 2. Confirm README screenshots render.
 3. Confirm CI passes.
-4. Create release `v0.1.0` from the pushed tag.
-5. Add a short post on X.
-6. Share in one relevant builder or data-analysis community.
-7. Wait for feedback before adding execution, alerts, or paid features.
+4. Confirm `DEMO.md` review checklist still matches the app.
+5. Create release `v0.1.0` from the pushed tag.
+6. Add a short post on X.
+7. Share in one relevant builder or data-analysis community.
+8. Wait for feedback before adding Telegram, Discord, or paid features.
 
 Do not launch it as a money-making tool. Launch it as a public-data research dashboard.
 
@@ -150,17 +167,16 @@ Day 6-7:
 
 - Write a short update post with what changed
 - Ask users which feature matters most:
-  - watchlist persistence
-  - browser notifications
-  - CSV export
   - better probability-change history
+  - CSV export
+  - demo GIF or short video
   - Telegram/Discord descriptive alerts
 
 ## Feedback Questions
 
 Use these when posting or replying:
 
-- Which panel is most useful: Market Radar, Whale Watch, or Wallet Scorecard?
+- Which panel is most useful: Radar, Wallets, Alerts, or Reports?
 - What data source should be added next?
 - Is Radar Score easy to understand?
 - What would make this worth starring?
@@ -170,11 +186,11 @@ Use these when posting or replying:
 
 Do first if users ask for it:
 
-1. Watchlist persistence
+1. Better probability-change history
 2. CSV export
-3. Better probability-change history
-4. Browser notifications
-5. Telegram/Discord descriptive alerts
+3. Demo GIF or short video
+4. Telegram/Discord descriptive alerts
+5. Additional public data sources
 
 Do not add:
 

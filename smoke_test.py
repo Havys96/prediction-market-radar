@@ -14,6 +14,7 @@ REQUIRED_FILES = [
     "build-static.js",
     "server.py",
     "README.md",
+    "DEMO.md",
     "LEGAL.md",
     "LICENSE",
     "VERSION",

@@ -43,6 +43,8 @@ Initial public-ready MVP.
 - Local alert rules with browser notification permission flow
 - Local descriptive observation log for probability moves, anomaly thresholds, and large public trades
 - Markdown and HTML research report export from the current browser state
+- Demo walkthrough checklist and refreshed README launch positioning
+- Updated desktop and mobile screenshots for the current interface
 
 ### Safety Boundary
 
