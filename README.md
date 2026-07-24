@@ -18,6 +18,7 @@ Prediction Market Radar gives you one local screen for market movers, probabilit
 | Launch copy | `PUBLIC_LAUNCH_PACK.md`, `FIRST_POST.md`, and `LAUNCH.md` |
 | Legal notice | `LEGAL.md` |
 | Support guide | `FUNDING_GUIDE.md` |
+| Sponsor setup | `SPONSORS_SETUP.md` |
 
 ## Try It In 60 Seconds
 
@@ -239,6 +240,8 @@ If this project saves you time, you can support open-source development through 
 Donations are optional and are not payment for signals, investment advice, betting advice, trading access, or restricted functionality.
 
 See `FUNDING_GUIDE.md` before adding any funding links. The safest default is GitHub Sponsors first, creator-support links second, and no public personal crypto wallet address at launch.
+
+The repository funding file points to GitHub Sponsors for `Havys96`. See `SPONSORS_SETUP.md` to finish GitHub account onboarding if the Sponsor button is not visible yet.
 
 ## Suggested GitHub Topics
 
