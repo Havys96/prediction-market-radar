@@ -74,8 +74,12 @@ Available exports:
 - copy Markdown
 - download Markdown
 - download HTML
+- download market CSV
+- download large-trade CSV
+- download Wallet Alpha CSV
+- download alert-observation CSV
 
-The exported report includes top markets, anomaly watch, watchlist focus, large public trades, Wallet Alpha candidates, and local alert observations.
+The exported report includes top markets, anomaly watch, watchlist focus, large public trades, Wallet Alpha candidates, and local alert observations. CSV exports are separate read-only tables for analysis outside the browser.
 
 ## Review Checklist
 
@@ -86,4 +90,3 @@ The exported report includes top markets, anomaly watch, watchlist focus, large 
 - No order execution exists.
 - No copy-trading or betting instruction exists.
 - The report export keeps the same research-only boundary.
-

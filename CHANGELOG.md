@@ -45,6 +45,7 @@ Initial public-ready MVP.
 - Markdown and HTML research report export from the current browser state
 - Demo walkthrough checklist and refreshed README launch positioning
 - Updated desktop and mobile screenshots for the current interface
+- CSV export for markets, large public trades, Wallet Alpha candidates, and local alert observations
 
 ### Safety Boundary
 

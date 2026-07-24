@@ -24,7 +24,7 @@ Prediction Market Radar helps you answer:
 1. Open the Radar tab to review market movers, anomaly cards, narrative clusters, and the local watchlist.
 2. Open the Wallets tab to inspect public wallet PnL, activity, and Wallet Alpha Ranking.
 3. Open the Alerts tab to configure local descriptive observation rules.
-4. Open the Reports tab to export the current research snapshot as Markdown or HTML.
+4. Open the Reports tab to export the current research snapshot as Markdown, HTML, or CSV.
 
 See `DEMO.md` for the full review checklist.
 
@@ -40,7 +40,7 @@ This project compresses that loop into a small local dashboard:
 | Hard to spot momentum | Probability, volume, liquidity, and close-time signals |
 | Whale trades are noisy | Recent large public trades in one panel |
 | Wallets are hard to judge | Public wallet PnL, win rate, risk grade, positions, and activity |
-| Notes are scattered | Markdown and HTML research report export |
+| Notes are scattered | Markdown, HTML, and CSV research export |
 | API outages happen | Snapshot cache fallback under `data/` |
 
 It is built as a public-data research tool, not a bot, not a signal service, and not a betting product.
@@ -67,7 +67,7 @@ Mobile reports view:
 | Wallets | public wallet positions, closed positions, activity, estimated PnL, win rate, risk grade |
 | Wallet Alpha | public wallet activity scoring and candidate ranking |
 | Alerts | local rules, local observation log, optional browser notifications |
-| Reports | Markdown and HTML research snapshot export |
+| Reports | Markdown, HTML, and CSV research snapshot export |
 | Operations | local Python proxy, JSON snapshot fallback, smoke test, GitHub Actions CI |
 
 Requires no API key.
@@ -172,7 +172,7 @@ MVP:
 - wallet alpha ranking
 - recent activity table
 - local descriptive alerts
-- Markdown and HTML research reports
+- Markdown, HTML, and CSV research exports
 - local snapshot fallback
 
 Current version:

@@ -872,13 +872,17 @@
         <section class="panel" style="margin-top:12px;">
           <div class="panel-head">
             <h2>Research Report Export</h2>
-            <span class="label">Markdown / HTML snapshot</span>
+            <span class="label">Markdown / HTML / CSV snapshot</span>
           </div>
           <div class="alert-actions">
             <button class="btn" id="refreshReportBtn">Refresh report</button>
             <button class="btn" id="copyReportBtn">Copy Markdown</button>
             <button class="btn" id="downloadMarkdownBtn">Download Markdown</button>
             <button class="btn" id="downloadHtmlBtn">Download HTML</button>
+            <button class="btn" id="downloadMarketsCsvBtn">Markets CSV</button>
+            <button class="btn" id="downloadTradesCsvBtn">Trades CSV</button>
+            <button class="btn" id="downloadWalletAlphaCsvBtn">Wallet Alpha CSV</button>
+            <button class="btn" id="downloadAlertsCsvBtn">Alerts CSV</button>
             <span class="label" id="reportStatus">Report is generated from the current browser state.</span>
           </div>
           <div class="cards">
@@ -890,7 +894,7 @@
               <pre id="reportPreview" style="white-space:pre-wrap; margin:0; color:var(--muted); font-size:12px; line-height:1.45; max-height:420px; overflow:auto;"></pre>
             </div>
             <div class="notice">
-              Export boundary: reports are read-only research snapshots. They intentionally avoid entry calls, copy-trade prompts, profit claims, and restricted-use instructions.
+              Export boundary: reports and CSV files are read-only research snapshots. They intentionally avoid entry calls, copy-trade prompts, profit claims, and restricted-use instructions.
             </div>
           </div>
         </section>
@@ -1652,6 +1656,72 @@
 </html>`;
     }
 
+    function csvCell(value) {
+      const text = String(value ?? "");
+      return /[",\n\r]/.test(text) ? `"${text.replace(/"/g, '""')}"` : text;
+    }
+
+    function toCsv(headers, rows) {
+      return [
+        headers.map(csvCell).join(","),
+        ...rows.map(row => row.map(csvCell).join(","))
+      ].join("\n");
+    }
+
+    function generateMarketsCsv() {
+      const rows = decorateMarkets(markets)
+        .sort((a, b) => Number(b.radarScore || 0) - Number(a.radarScore || 0))
+        .map(m => [
+          m.title,
+          m.cat,
+          m.tag,
+          Number(m.prob || 0),
+          Number(m.move || 0).toFixed(2),
+          Number(m.vol || 0),
+          Number(m.liq || m.liquidity || 0),
+          Number(m.radarScore || 0),
+          Number(m.anomalyScore || 0),
+          (m.anomalyReasons || []).join(" / "),
+          m.signal,
+          m.close
+        ]);
+      return toCsv(
+        ["market", "category", "tag", "probability_pct", "move_pts", "volume", "liquidity", "radar_score", "anomaly_score", "anomaly_reasons", "signal", "close"],
+        rows
+      );
+    }
+
+    function generateTradesCsv() {
+      return toCsv(
+        ["wallet", "observed_size", "market", "action", "score"],
+        whales.map(w => [w.wallet, w.amount, w.market, w.action, w.score])
+      );
+    }
+
+    function generateWalletAlphaCsv() {
+      return toCsv(
+        ["wallet", "short_wallet", "alpha_score", "trade_count", "observed_size", "market_count", "largest_trade", "sample_markets", "note"],
+        alphaWallets.map(w => [
+          w.wallet,
+          w.shortWallet || formatWallet(w.wallet),
+          w.alphaScore,
+          w.tradeCount,
+          Number(w.notional || 0),
+          w.marketCount,
+          Number(w.largestTrade || 0),
+          (w.sampleMarkets || []).join(" / "),
+          w.note || ""
+        ])
+      );
+    }
+
+    function generateAlertsCsv() {
+      return toCsv(
+        ["time", "type", "observation", "watchlist_focus"],
+        alertEvents.map(a => [a.time, a.title, a.body, a.focus ? "yes" : "no"])
+      );
+    }
+
     function downloadTextFile(filename, content, type) {
       const blob = new Blob([content], { type });
       const url = URL.createObjectURL(blob);
@@ -1696,6 +1766,22 @@
         const report = renderReportPreview();
         downloadTextFile(`prediction-market-radar-${reportTimestamp()}.html`, markdownToHtml(report), "text/html;charset=utf-8");
         document.getElementById("reportStatus").textContent = "HTML report downloaded.";
+      });
+      document.getElementById("downloadMarketsCsvBtn").addEventListener("click", () => {
+        downloadTextFile(`prediction-market-radar-markets-${reportTimestamp()}.csv`, generateMarketsCsv(), "text/csv;charset=utf-8");
+        document.getElementById("reportStatus").textContent = "Markets CSV downloaded.";
+      });
+      document.getElementById("downloadTradesCsvBtn").addEventListener("click", () => {
+        downloadTextFile(`prediction-market-radar-trades-${reportTimestamp()}.csv`, generateTradesCsv(), "text/csv;charset=utf-8");
+        document.getElementById("reportStatus").textContent = "Trades CSV downloaded.";
+      });
+      document.getElementById("downloadWalletAlphaCsvBtn").addEventListener("click", () => {
+        downloadTextFile(`prediction-market-radar-wallet-alpha-${reportTimestamp()}.csv`, generateWalletAlphaCsv(), "text/csv;charset=utf-8");
+        document.getElementById("reportStatus").textContent = "Wallet Alpha CSV downloaded.";
+      });
+      document.getElementById("downloadAlertsCsvBtn").addEventListener("click", () => {
+        downloadTextFile(`prediction-market-radar-alerts-${reportTimestamp()}.csv`, generateAlertsCsv(), "text/csv;charset=utf-8");
+        document.getElementById("reportStatus").textContent = "Alerts CSV downloaded.";
       });
     }
 

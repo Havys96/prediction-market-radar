@@ -2,11 +2,11 @@
 
 ## One-Line Description
 
-Prediction Market Radar is a read-only prediction-market research dashboard for market movers, anomaly detection, public whale trades, wallet analysis, local alerts, and exportable research reports.
+Prediction Market Radar is a read-only prediction-market research dashboard for market movers, anomaly detection, public whale trades, wallet analysis, local alerts, and exportable Markdown, HTML, and CSV research reports.
 
 ## Short GitHub Description
 
-Read-only prediction-market research dashboard. Track Polymarket movers, anomalies, public whale trades, wallet activity, local alerts, and exportable reports without connecting a wallet or placing trades.
+Read-only prediction-market research dashboard. Track Polymarket movers, anomalies, public whale trades, wallet activity, local alerts, and exportable Markdown/HTML/CSV reports without connecting a wallet or placing trades.
 
 ## X Post
 
@@ -21,7 +21,7 @@ A read-only dashboard for Polymarket public data:
 - public wallet PnL
 - Wallet Alpha candidates
 - local descriptive alerts
-- Markdown/HTML research reports
+- Markdown/HTML/CSV research reports
 
 No wallet connection.
 No private keys.
@@ -47,7 +47,7 @@ It helps track public Polymarket data without connecting a wallet or placing tra
 - wallet PnL scorecard
 - Wallet Alpha Ranking
 - local descriptive alerts
-- Markdown/HTML research report export
+- Markdown/HTML/CSV research report export
 - local snapshot fallback
 
 3/ The boundary is intentional:
@@ -94,7 +94,7 @@ Current features:
 - wallet PnL scorecard
 - Wallet Alpha Ranking
 - local descriptive alerts
-- Markdown/HTML report export
+- Markdown/HTML/CSV report export
 - local snapshot cache
 
 I built it as a research tool, not a trading bot. Feedback on data sources, scoring, and UX would be useful.
@@ -118,7 +118,7 @@ Initial release:
 - narrative tracker
 - local watchlist
 - local alert rules
-- Markdown/HTML report export
+- Markdown/HTML/CSV report export
 - snapshot cache fallback
 - README safety boundary
 
@@ -168,7 +168,6 @@ Day 6-7:
 - Write a short update post with what changed
 - Ask users which feature matters most:
   - better probability-change history
-  - CSV export
   - demo GIF or short video
   - Telegram/Discord descriptive alerts
 
@@ -187,10 +186,10 @@ Use these when posting or replying:
 Do first if users ask for it:
 
 1. Better probability-change history
-2. CSV export
-3. Demo GIF or short video
-4. Telegram/Discord descriptive alerts
-5. Additional public data sources
+2. Demo GIF or short video
+3. Telegram/Discord descriptive alerts
+4. Additional public data sources
+5. Saved report archive
 
 Do not add:
 
