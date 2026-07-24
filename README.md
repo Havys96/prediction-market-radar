@@ -15,7 +15,7 @@ Prediction Market Radar gives you one local screen for market movers, probabilit
 | --- | --- |
 | Latest release | https://github.com/Havys96/prediction-market-radar/releases/tag/v0.1.0 |
 | Demo checklist | `DEMO.md` |
-| Launch copy | `PUBLIC_LAUNCH_PACK.md`, `FIRST_POST.md`, and `LAUNCH.md` |
+| Launch copy | `SOCIAL_POSTS.md`, `PUBLIC_LAUNCH_PACK.md`, `FIRST_POST.md`, and `LAUNCH.md` |
 | Legal notice | `LEGAL.md` |
 | Support guide | `FUNDING_GUIDE.md` |
 | Sponsor setup | `SPONSORS_SETUP.md` |
