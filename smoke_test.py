@@ -16,6 +16,7 @@ REQUIRED_FILES = [
     "server.py",
     "README.md",
     "DEMO.md",
+    "PRELAUNCH_REVIEW.md",
     "LEGAL.md",
     "LICENSE",
     "VERSION",

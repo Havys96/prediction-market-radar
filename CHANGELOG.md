@@ -48,6 +48,7 @@ Initial public-ready MVP.
 - CSV export for markets, large public trades, Wallet Alpha candidates, and local alert observations
 - Server-side 15m, 1h, and 24h probability-change history calculations
 - Markets CSV and Markdown report now include history-window probability deltas
+- Prelaunch review document and updated GitHub publishing checklist
 
 ### Safety Boundary
 

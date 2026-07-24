@@ -11,7 +11,7 @@ prediction-market-radar
 Description:
 
 ```text
-Read-only prediction-market intelligence dashboard for Polymarket movers, whale trades, wallet PnL, and public activity.
+Read-only prediction-market research dashboard for movers, anomalies, public whale trades, wallet analysis, local alerts, and reports.
 ```
 
 Topics:
@@ -25,6 +25,7 @@ wallet-analyzer
 whale-tracker
 pnl
 market-intelligence
+alerts
 open-source
 ```
 
@@ -70,7 +71,7 @@ Prediction Market Radar v0.1.0
 Release summary:
 
 ```text
-Initial local MVP with read-only public market data, Radar Score, whale trade detection, wallet scorecard, snapshot cache, and GitHub-ready documentation.
+Initial local MVP with read-only public market data, Radar Score, anomaly detection, 15m/1h/24h history deltas, whale trade observations, wallet scorecard, Wallet Alpha Ranking, local alerts, Markdown/HTML/CSV exports, snapshot cache, and GitHub-ready documentation.
 ```
 
 Release notes are also available in `CHANGELOG.md`.

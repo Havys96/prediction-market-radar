@@ -7,6 +7,7 @@ Use this after creating an empty GitHub repository.
 Recommended:
 
 - Repository name: `prediction-market-radar`
+- Description: `Read-only prediction-market research dashboard for movers, anomalies, public whale trades, wallet analysis, local alerts, and reports.`
 - Visibility: public
 - Do not add README
 - Do not add `.gitignore`
@@ -63,6 +64,7 @@ Check:
 - Repo description is set
 - Topics are set
 - Release `v0.1.0` is created
+- Release notes match `CHANGELOG.md`
 - GitHub Actions CI passes
 - `v0.1.0` tag is visible on GitHub
 

@@ -4,10 +4,11 @@
 
 - [ ] Choose repository name: `prediction-market-radar`
 - [ ] Set description:
-  `Read-only prediction-market intelligence dashboard for Polymarket movers, whale trades, wallet PnL, and public activity.`
+  `Read-only prediction-market research dashboard for movers, anomalies, public whale trades, wallet analysis, local alerts, and reports.`
 - [ ] Add topics:
-  `polymarket`, `prediction-market`, `dashboard`, `wallet-analyzer`, `whale-tracker`, `pnl`, `market-intelligence`
+  `polymarket`, `prediction-market`, `dashboard`, `wallet-analyzer`, `whale-tracker`, `pnl`, `market-intelligence`, `alerts`, `open-source`
 - [ ] Confirm README screenshot renders
+- [ ] Confirm `DEMO.md` and `PRELAUNCH_REVIEW.md` match the current interface
 - [ ] Confirm no private keys, API keys, wallet secrets, or `.env` files exist
 - [ ] Confirm safety boundary is visible in README
 - [ ] Confirm `LEGAL.md` is visible and linked from README
@@ -36,7 +37,8 @@ Check:
 - [ ] Market rows render
 - [ ] Whale Watch renders
 - [ ] Wallet Scorecard works with a public 0x address
-- [ ] README Angle page shows safety text
+- [ ] Reports tab shows README hook, Markdown/HTML export, and CSV export
+- [ ] Alerts tab stores local descriptive observations only
 - [ ] Refresh button does not request wallet permissions
 - [ ] Support section does not imply payment for profit, entries, signals, or restricted access
 

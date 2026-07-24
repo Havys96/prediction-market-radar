@@ -28,6 +28,8 @@ Prediction Market Radar helps you answer:
 
 See `DEMO.md` for the full review checklist.
 
+See `PRELAUNCH_REVIEW.md` before publishing the repo.
+
 ## Why People Might Use It
 
 Prediction markets are fragmented. A researcher often has to open market pages, wallet pages, leaderboards, trade feeds, and notes just to understand what changed.
