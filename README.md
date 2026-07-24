@@ -9,15 +9,50 @@ Read-only intelligence dashboard for prediction-market research.
 
 Prediction Market Radar gives you one local screen for market movers, probability shifts, whale-sized public trades, and public wallet research without connecting a wallet or placing trades.
 
+## Links
+
+| Resource | Link |
+| --- | --- |
+| Latest release | https://github.com/Havys96/prediction-market-radar/releases/tag/v0.1.0 |
+| Demo checklist | `DEMO.md` |
+| Launch copy | `PUBLIC_LAUNCH_PACK.md`, `FIRST_POST.md`, and `LAUNCH.md` |
+| Legal notice | `LEGAL.md` |
+| Support guide | `FUNDING_GUIDE.md` |
+
+## Try It In 60 Seconds
+
+```bash
+git clone https://github.com/Havys96/prediction-market-radar.git
+cd prediction-market-radar
+python smoke_test.py
+python server.py
+```
+
+Open:
+
+```text
+http://127.0.0.1:8765
+```
+
 Prediction Market Radar helps you answer:
 
 - What markets are moving right now?
 - Where are large public trades appearing?
-- Which public wallets are active or profitable?
+- Which public wallets are active or worth studying?
 - Which markets deserve research attention first?
 - Is a wallet actually useful to study, or just noisy?
 
 > Research dashboard only. No wallet connection, no private keys, no order execution, no trading or betting advice.
+
+## Best For
+
+- prediction-market researchers
+- public-data analysts
+- dashboard builders
+- wallet-activity review
+- local research workflows
+
+Not for automated trading, automated betting, copy-trading, or financial advice.
 
 ## Demo Path
 
@@ -39,7 +74,7 @@ This project compresses that loop into a small local dashboard:
 | Problem | What the dashboard shows |
 | --- | --- |
 | Too many markets | Ranked market list with Radar Score |
-| Hard to spot momentum | Probability, volume, liquidity, and close-time signals |
+| Hard to spot momentum | Probability, volume, liquidity, and close-time indicators |
 | Whale trades are noisy | Recent large public trades in one panel |
 | Wallets are hard to judge | Public wallet PnL, win rate, risk grade, positions, and activity |
 | Notes are scattered | Markdown, HTML, and CSV research export |
@@ -155,7 +190,7 @@ It combines:
 - 24h volume
 - liquidity
 - time to market close
-- descriptive signals such as whale, news, or volume activity
+- descriptive indicators such as whale, news, or volume activity
 
 Radar Score is not a trading recommendation.
 
