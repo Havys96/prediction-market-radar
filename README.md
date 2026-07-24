@@ -53,6 +53,7 @@ Mobile:
 - Analyzes public wallet positions, closed positions, and activity
 - Displays estimated PnL, win rate, category breakdown, and recent trades
 - Detects unusual market activity with Market Anomaly Detector
+- Blends server-side history deltas into anomaly scoring when available
 - Tracks category-level narratives and attention clusters
 - Stores a local watchlist and daily digest in the browser
 - Logs before/after market movement from server snapshots, with browser fallback

@@ -39,6 +39,7 @@ Initial public-ready MVP.
 - Wallet Alpha Score
 - Server-side market history snapshots under `data/history.json`
 - Wallet Alpha Ranking from recent public trade activity
+- History-backed anomaly scoring with probability and volume deltas
 
 ### Safety Boundary
 
