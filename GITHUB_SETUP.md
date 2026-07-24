@@ -19,11 +19,10 @@ Topics:
 ```text
 polymarket
 prediction-market
-prediction-markets
+market-research
 dashboard
-wallet-analyzer
-whale-tracker
-pnl
+wallet-analysis
+whale-watcher
 market-intelligence
 alerts
 open-source
@@ -44,14 +43,14 @@ Then create a GitHub repo and connect it:
 
 ```bash
 git branch -M main
-git remote add origin https://github.com/YOUR_NAME/prediction-market-radar.git
+git remote add origin https://github.com/Havys96/prediction-market-radar.git
 git push -u origin main
 ```
 
 On Windows, you can use the included helper:
 
 ```powershell
-.\publish.ps1 -RepoUrl "https://github.com/YOUR_NAME/prediction-market-radar.git"
+.\publish.ps1 -RepoUrl "https://github.com/Havys96/prediction-market-radar.git"
 ```
 
 ## First Release
@@ -82,7 +81,11 @@ If early response is good, pin the repo on your GitHub profile.
 
 ## First Public Post
 
-Use `FIRST_POST.md` after replacing `<repo link>` with the GitHub URL.
+Use `FIRST_POST.md` with the live GitHub URL:
+
+```text
+https://github.com/Havys96/prediction-market-radar
+```
 
 ## Important
 

@@ -29,7 +29,7 @@ No order execution.
 No trading or betting advice.
 
 Open-source MVP:
-<repo link>
+https://github.com/Havys96/prediction-market-radar
 
 ## Longer X Thread
 
@@ -77,7 +77,7 @@ This compresses the research loop into one local dashboard.
 - browser localStorage for watchlists, alerts, and local reports
 
 Repo:
-<repo link>
+https://github.com/Havys96/prediction-market-radar
 
 ## Reddit / Discord Post
 
@@ -101,7 +101,7 @@ Current features:
 I built it as a research tool, not a trading bot. Feedback on data sources, scoring, and UX would be useful.
 
 Repo:
-<repo link>
+https://github.com/Havys96/prediction-market-radar
 
 ## GitHub Release Notes
 
@@ -132,11 +132,11 @@ Known limitations:
 
 ## Launch Order
 
-1. Publish the GitHub repo.
+1. Publish the GitHub repo. Done: https://github.com/Havys96/prediction-market-radar
 2. Confirm README screenshots render.
 3. Confirm CI passes.
 4. Confirm `DEMO.md` review checklist still matches the app.
-5. Create release `v0.1.0` from the pushed tag.
+5. Create release `v0.1.0` from the pushed tag. Done: https://github.com/Havys96/prediction-market-radar/releases/tag/v0.1.0
 6. Add a short post on X.
 7. Share in one relevant builder or data-analysis community.
 8. Wait for feedback before adding Telegram, Discord, or paid features.

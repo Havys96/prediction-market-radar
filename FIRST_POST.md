@@ -1,6 +1,6 @@
 # First Public Post
 
-Use this after replacing `<repo link>` with the GitHub URL.
+Use this for the first public GitHub, X, Reddit, Discord, or builder-community share.
 
 ## Short Post
 
@@ -24,7 +24,7 @@ No order execution.
 No trading or betting advice.
 
 Open-source MVP:
-<repo link>
+https://github.com/Havys96/prediction-market-radar
 
 ## Builder Community Post
 
@@ -49,5 +49,8 @@ I built it as a research tool, not a trading bot or signal service.
 Feedback on data sources, scoring, and UX would be useful.
 
 Repo:
-<repo link>
+https://github.com/Havys96/prediction-market-radar
 
+## Release Link
+
+https://github.com/Havys96/prediction-market-radar/releases/tag/v0.1.0

@@ -210,12 +210,10 @@ See `FUNDING_GUIDE.md` before adding any funding links. The safest default is Gi
 ```text
 polymarket
 prediction-market
-prediction-markets
-prediction-market-dashboard
-polymarket-analytics
-whale-tracker
-wallet-analyzer
-pnl
+market-research
+dashboard
+wallet-analysis
+whale-watcher
 market-intelligence
 alerts
 open-source
