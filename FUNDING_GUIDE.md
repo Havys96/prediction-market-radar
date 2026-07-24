@@ -43,23 +43,18 @@ Premium wallets and entries for sponsors.
 
 ## GitHub Sponsors Setup
 
-1. Open GitHub Sponsors.
-2. Enable sponsorship for your GitHub account if eligible.
-3. Edit `.github/FUNDING.yml`.
-4. Replace:
+Current repository funding file:
 
 ```yaml
-# github: [your-github-username]
+github: [Havys96]
 ```
 
-with:
+To make the button actually accept support:
 
-```yaml
-github: [YOUR_USERNAME]
-```
-
-5. Commit and push.
-6. Confirm the Sponsor button appears on the GitHub repository.
+1. Open GitHub Sponsors from the `Havys96` account.
+2. Enable sponsorship for the GitHub account if eligible.
+3. Confirm the Sponsor button appears on the repository.
+4. Keep the donation copy as open-source support only.
 
 ## Buy Me a Coffee / Ko-fi
 
@@ -94,4 +89,3 @@ Bad:
 ```text
 Use this to find profitable opportunities. Support me with a share of profits.
 ```
-
