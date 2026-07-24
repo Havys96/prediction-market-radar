@@ -57,6 +57,7 @@ Mobile:
 - Stores a local watchlist and daily digest in the browser
 - Logs before/after market movement from server snapshots, with browser fallback
 - Scores public wallets with an Alpha Score research metric
+- Ranks public wallet activity candidates with Wallet Alpha Ranking
 - Keeps a small local `data/history.json` market history when run with `python server.py`
 - Includes local snapshot fallback data
 - Includes a local smoke test and GitHub Actions CI
@@ -154,6 +155,7 @@ MVP:
 - before/after movement log
 - server-side market history file
 - wallet scorecard
+- wallet alpha ranking
 - recent activity table
 - local snapshot fallback
 

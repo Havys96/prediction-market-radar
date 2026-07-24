@@ -38,6 +38,7 @@ Initial public-ready MVP.
 - Before/After Movement Log
 - Wallet Alpha Score
 - Server-side market history snapshots under `data/history.json`
+- Wallet Alpha Ranking from recent public trade activity
 
 ### Safety Boundary
 

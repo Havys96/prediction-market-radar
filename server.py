@@ -1,6 +1,7 @@
 from __future__ import annotations
 
 import json
+import math
 import mimetypes
 import re
 import threading
@@ -52,6 +53,9 @@ class Handler(BaseHTTPRequestHandler):
             return
         if parsed.path == "/api/whales":
             self.proxy_whales(parsed.query)
+            return
+        if parsed.path == "/api/wallet-alpha":
+            self.proxy_wallet_alpha(parsed.query)
             return
         if parsed.path in WALLET_ENDPOINTS:
             self.proxy_wallet_json(parsed.path, parsed.query)
@@ -125,6 +129,22 @@ class Handler(BaseHTTPRequestHandler):
             cache = CACHE_FILES["/api/whales"]
             if cache.exists():
                 self.send_json_file(cache)
+                return
+            self.send_json({"error": str(exc)}, status=502)
+
+    def proxy_wallet_alpha(self, query: str) -> None:
+        params = parse_qs(query)
+        limit = params.get("limit", ["12"])[0]
+        if not limit.isdigit() or not (1 <= int(limit) <= 40):
+            limit = "12"
+
+        try:
+            trades = self.fetch_json("https://data-api.polymarket.com/trades?limit=500&takerOnly=false")
+            self.send_json(build_wallet_alpha_ranking(trades, int(limit)))
+        except (urllib.error.URLError, TimeoutError, ValueError) as exc:
+            cache = CACHE_FILES["/api/whales"]
+            if cache.exists():
+                self.send_json(build_wallet_alpha_ranking(read_json_file(cache), int(limit)))
                 return
             self.send_json({"error": str(exc)}, status=502)
 
@@ -276,6 +296,76 @@ def append_market_history(markets) -> None:
             json.dumps(history[-MAX_HISTORY_SNAPSHOTS:], ensure_ascii=False, indent=2),
             encoding="utf-8",
         )
+
+
+def build_wallet_alpha_ranking(trades, limit: int) -> list[dict[str, object]]:
+    wallets: dict[str, dict[str, object]] = {}
+    for trade in trades if isinstance(trades, list) else []:
+        if not isinstance(trade, dict):
+            continue
+        wallet = str(trade.get("proxyWallet") or "")
+        if not WALLET_RE.match(wallet):
+            continue
+        size = first_number(trade.get("size"))
+        price = first_number(trade.get("price"))
+        usdc = first_number(trade.get("usdcSize"), size * price)
+        if usdc <= 0:
+            continue
+
+        item = wallets.setdefault(wallet, {
+            "wallet": wallet,
+            "tradeCount": 0,
+            "notional": 0.0,
+            "markets": set(),
+            "buyCount": 0,
+            "sellCount": 0,
+            "largestTrade": 0.0,
+            "latestTimestamp": 0,
+            "sampleMarkets": [],
+        })
+        item["tradeCount"] = int(item["tradeCount"]) + 1
+        item["notional"] = float(item["notional"]) + usdc
+        item["largestTrade"] = max(float(item["largestTrade"]), usdc)
+        item["latestTimestamp"] = max(int(item["latestTimestamp"]), int(first_number(trade.get("timestamp"))))
+        if str(trade.get("side") or "").upper() == "BUY":
+            item["buyCount"] = int(item["buyCount"]) + 1
+        elif str(trade.get("side") or "").upper() == "SELL":
+            item["sellCount"] = int(item["sellCount"]) + 1
+        title = str(trade.get("title") or "Unknown market")
+        item["markets"].add(title)
+        if len(item["sampleMarkets"]) < 3 and title not in item["sampleMarkets"]:
+            item["sampleMarkets"].append(title)
+
+    now = int(time.time())
+    rows = []
+    for item in wallets.values():
+        market_count = len(item["markets"])
+        trade_count = int(item["tradeCount"])
+        notional = float(item["notional"])
+        largest = float(item["largestTrade"])
+        recency_hours = max(0.0, (now - int(item["latestTimestamp"])) / 3600) if item["latestTimestamp"] else 999.0
+        activity_score = min(24.0, trade_count * 4.0)
+        capital_score = min(28.0, max(0.0, math.log10(notional + 1) * 5.0))
+        diversity_score = min(18.0, market_count * 4.0)
+        conviction_score = min(16.0, math.log10(largest + 1) * 3.0)
+        recency_score = 14.0 if recency_hours <= 2 else 10.0 if recency_hours <= 12 else 6.0 if recency_hours <= 48 else 2.0
+        score = round(min(100.0, 25.0 + activity_score + capital_score + diversity_score + conviction_score + recency_score))
+        rows.append({
+            "wallet": item["wallet"],
+            "shortWallet": str(item["wallet"])[:6] + "..." + str(item["wallet"])[-4:],
+            "alphaScore": score,
+            "tradeCount": trade_count,
+            "notional": round(notional, 2),
+            "marketCount": market_count,
+            "largestTrade": round(largest, 2),
+            "buyCount": int(item["buyCount"]),
+            "sellCount": int(item["sellCount"]),
+            "sampleMarkets": item["sampleMarkets"],
+            "note": "Public activity candidate only; not a recommendation.",
+        })
+
+    rows.sort(key=lambda item: (int(item["alphaScore"]), float(item["notional"])), reverse=True)
+    return rows[:limit]
 
 
 def main() -> None:

@@ -29,6 +29,7 @@ REQUIRED_FILES = [
     "data/markets.json",
     "data/whales.json",
     "data/history.json",
+    "data/wallet-alpha.json",
 ]
 
 REQUIRED_README_TEXT = [

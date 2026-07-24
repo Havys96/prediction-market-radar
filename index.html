@@ -745,6 +745,14 @@
             </table>
           </div>
         </section>
+
+        <section class="panel" style="margin-top:12px;">
+          <div class="panel-head">
+            <h2>Wallet Alpha Ranking</h2>
+            <span class="label">Public activity candidates, not copy-trade signals</span>
+          </div>
+          <div class="cards" id="alphaRankingCards"></div>
+        </section>
       </section>
 
       <section id="alerts" class="view">
@@ -838,6 +846,7 @@
     let watchlist = loadLocalList("pmr_watchlist");
     let movementLog = loadLocalList("pmr_movement_log");
     let serverHistoryChanges = [];
+    let alphaWallets = [];
 
     function loadLocalList(key) {
       try {
@@ -1345,6 +1354,52 @@
       `).join("");
     }
 
+    function renderAlphaRanking() {
+      const box = document.getElementById("alphaRankingCards");
+      if (!alphaWallets.length) {
+        box.innerHTML = `<div class="trade-card"><span class="label">Loading public wallet activity candidates...</span></div>`;
+        return;
+      }
+
+      box.innerHTML = alphaWallets.slice(0, 8).map((wallet, index) => `
+        <button class="trade-card watch alpha-card" data-wallet="${escapeHtml(wallet.wallet)}" style="text-align:left; color:inherit;">
+          <div class="trade-top">
+            <strong>#${index + 1} ${escapeHtml(wallet.shortWallet || formatWallet(wallet.wallet))}</strong>
+            <span class="score">${wallet.alphaScore}</span>
+          </div>
+          <div class="mini">
+            <div><span class="label">Trades</span><b>${wallet.tradeCount}</b></div>
+            <div><span class="label">Observed size</span><b>${money(wallet.notional)}</b></div>
+            <div><span class="label">Markets</span><b>${wallet.marketCount}</b></div>
+            <div><span class="label">Largest</span><b>${money(wallet.largestTrade)}</b></div>
+          </div>
+          <span class="label">${escapeHtml((wallet.sampleMarkets || []).slice(0, 2).join(" / ") || wallet.note || "Public activity candidate only.")}</span>
+        </button>
+      `).join("");
+
+      box.querySelectorAll(".alpha-card").forEach(card => {
+        card.addEventListener("click", () => {
+          const wallet = card.dataset.wallet;
+          if (!wallet) return;
+          document.getElementById("walletInput").value = wallet;
+          analyzeWalletLive(wallet);
+        });
+      });
+    }
+
+    async function loadWalletAlphaRanking() {
+      try {
+        const data = await fetchJsonWithFallback(
+          "/api/wallet-alpha?limit=12",
+          "data/wallet-alpha.json"
+        );
+        alphaWallets = Array.isArray(data) ? data : [];
+      } catch {
+        alphaWallets = [];
+      }
+      renderAlphaRanking();
+    }
+
     function classifyMarket(title) {
       const text = String(title || "").toLowerCase();
       if (/(bitcoin|btc|ethereum|eth|crypto|solana|xrp|doge|binance)/.test(text)) return "Crypto";
@@ -1472,8 +1527,10 @@
     renderWhales();
     renderNews();
     renderWalletRows();
+    renderAlphaRanking();
     document.getElementById("activityRows").innerHTML = `<tr><td>TRADE</td><td>BTC 15m intervals</td><td class="green">BUY</td><td>$64k</td></tr>`;
     loadLiveData();
+    loadWalletAlphaRanking();
     analyzeWalletLive(document.getElementById("walletInput").value.trim());
   </script>
 </body>

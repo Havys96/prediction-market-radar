@@ -1,0 +1,35 @@
+[
+  {
+    "wallet": "0x6046cd5f7fbb585eb088b18071a5007677e287f8",
+    "shortWallet": "0x6046...87f8",
+    "alphaScore": 86,
+    "tradeCount": 9,
+    "notional": 18420.55,
+    "marketCount": 5,
+    "largestTrade": 4200.12,
+    "buyCount": 7,
+    "sellCount": 2,
+    "sampleMarkets": [
+      "Games Total: O/U 2.5",
+      "ITF Huamantla: Carolina Alonso vs Amanda Carolina Nava Elkin",
+      "Minnesota Twins vs. Cleveland Guardians"
+    ],
+    "note": "Public activity candidate only; not a recommendation."
+  },
+  {
+    "wallet": "0x2005d16a84ceefa912d4e380cd32e7ff827875ea",
+    "shortWallet": "0x2005...75ea",
+    "alphaScore": 78,
+    "tradeCount": 6,
+    "notional": 9700.2,
+    "marketCount": 4,
+    "largestTrade": 2500.0,
+    "buyCount": 5,
+    "sellCount": 1,
+    "sampleMarkets": [
+      "ITF Huamantla: Carolina Alonso vs Amanda Carolina Nava Elkin",
+      "Games Total: O/U 2.5"
+    ],
+    "note": "Public activity candidate only; not a recommendation."
+  }
+]
