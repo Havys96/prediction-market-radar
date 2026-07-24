@@ -837,6 +837,7 @@
     let currentSort = "radarScore";
     let watchlist = loadLocalList("pmr_watchlist");
     let movementLog = loadLocalList("pmr_movement_log");
+    let serverHistoryChanges = [];
 
     function loadLocalList(key) {
       try {
@@ -1126,6 +1127,19 @@
     }
 
     function renderMovementLog() {
+      if (serverHistoryChanges.length) {
+        document.getElementById("movementLogCards").innerHTML = serverHistoryChanges.slice(0, 5).map(item => `
+          <div class="trade-card">
+            <div class="trade-top">
+              <strong>${escapeHtml(item.title)}</strong>
+              <span class="${item.probDelta >= 0 ? "green" : "red"}">${item.probDelta >= 0 ? "+" : ""}${item.probDelta.toFixed(1)} pts</span>
+            </div>
+            <span class="label">Server history: probability ${item.beforeProb.toFixed(0)}% to ${item.prob.toFixed(0)}% / volume ${money(item.beforeVolume)} to ${money(item.volume)}</span>
+          </div>
+        `).join("");
+        return;
+      }
+
       const previous = new Map(loadLocalList("pmr_market_snapshot").map(item => [item.key, item]));
       const snapshot = decorateMarkets(markets).map(m => ({
         key: marketKey(m.title),
@@ -1168,6 +1182,36 @@
           <span class="label">Probability ${item.beforeProb.toFixed(0)}% → ${item.prob.toFixed(0)}% / Radar ${item.beforeRadar} → ${item.radarScore}</span>
         </div>
       `).join("") : `<div class="trade-card"><span class="label">Movement log starts after the next refresh. It compares the previous local snapshot with the current market feed.</span></div>`;
+    }
+
+    async function loadServerHistoryChanges() {
+      try {
+        const response = await fetch("/api/history?limit=2", { cache: "no-store" });
+        if (!response.ok) return;
+        const history = await response.json();
+        if (!Array.isArray(history) || history.length < 2) return;
+        const previous = history[history.length - 2];
+        const latest = history[history.length - 1];
+        if (!Array.isArray(previous.markets) || !Array.isArray(latest.markets)) return;
+        const beforeMap = new Map(previous.markets.map(item => [item.key, item]));
+        serverHistoryChanges = latest.markets.map(now => {
+          const before = beforeMap.get(now.key);
+          if (!before) return null;
+          return {
+            title: now.title,
+            prob: Number(now.prob || 0),
+            beforeProb: Number(before.prob || 0),
+            volume: Number(now.volume || 0),
+            beforeVolume: Number(before.volume || 0),
+            probDelta: Number(now.prob || 0) - Number(before.prob || 0),
+            volumeDelta: Number(now.volume || 0) - Number(before.volume || 0),
+          };
+        }).filter(Boolean)
+          .filter(item => Math.abs(item.probDelta) >= 1 || Math.abs(item.volumeDelta) >= 10000)
+          .sort((a, b) => Math.abs(b.probDelta) - Math.abs(a.probDelta));
+      } catch {
+        serverHistoryChanges = [];
+      }
     }
 
     async function fetchJsonWithFallback(localUrl, externalUrl) {
@@ -1237,6 +1281,7 @@
         document.getElementById("detailClose").textContent = best.close || "n/a";
         document.getElementById("detailScore").textContent = best.radarScore || 0;
       }
+      await loadServerHistoryChanges();
       renderMarkets();
     }
 

@@ -28,6 +28,7 @@ REQUIRED_FILES = [
     "docs/screenshot-mobile.png",
     "data/markets.json",
     "data/whales.json",
+    "data/history.json",
 ]
 
 REQUIRED_README_TEXT = [

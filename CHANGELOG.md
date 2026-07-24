@@ -37,6 +37,7 @@ Initial public-ready MVP.
 - Watchlist and Daily Digest
 - Before/After Movement Log
 - Wallet Alpha Score
+- Server-side market history snapshots under `data/history.json`
 
 ### Safety Boundary
 

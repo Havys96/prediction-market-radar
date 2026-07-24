@@ -36,6 +36,7 @@ const assetFiles = [
   "data/markets.json",
   "data/leaderboard.json",
   "data/whales.json",
+  "data/history.json",
   "docs/screenshot-desktop.png",
   "docs/screenshot-mobile.png",
   "docs/hames-labs-profile-logo.png",
