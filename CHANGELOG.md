@@ -42,6 +42,7 @@ Initial public-ready MVP.
 - History-backed anomaly scoring with probability and volume deltas
 - Local alert rules with browser notification permission flow
 - Local descriptive observation log for probability moves, anomaly thresholds, and large public trades
+- Markdown and HTML research report export from the current browser state
 
 ### Safety Boundary
 

@@ -564,7 +564,7 @@
         <button class="nav-btn active" data-view="radar"><span class="nav-ico">⌁</span> Radar</button>
         <button class="nav-btn" data-view="wallets"><span class="nav-ico">◎</span> Wallets</button>
         <button class="nav-btn" data-view="alerts"><span class="nav-ico">!</span> Alerts</button>
-        <button class="nav-btn" data-view="readme"><span class="nav-ico">#</span> README Angle</button>
+        <button class="nav-btn" data-view="readme"><span class="nav-ico">#</span> Reports</button>
       </nav>
       <div class="risk-box">
         Research mode only. No wallet connection, private keys, order execution, trading advice, or geo-bypass guidance.
@@ -866,6 +866,31 @@
             <div class="trade-card">
               <strong>Support</strong>
               <span class="label">If this saved you time, you can support open-source development through GitHub Sponsors or Buy Me a Coffee. Donations are optional and are not payment for signals, advice, or restricted access.</span>
+            </div>
+          </div>
+        </section>
+        <section class="panel" style="margin-top:12px;">
+          <div class="panel-head">
+            <h2>Research Report Export</h2>
+            <span class="label">Markdown / HTML snapshot</span>
+          </div>
+          <div class="alert-actions">
+            <button class="btn" id="refreshReportBtn">Refresh report</button>
+            <button class="btn" id="copyReportBtn">Copy Markdown</button>
+            <button class="btn" id="downloadMarkdownBtn">Download Markdown</button>
+            <button class="btn" id="downloadHtmlBtn">Download HTML</button>
+            <span class="label" id="reportStatus">Report is generated from the current browser state.</span>
+          </div>
+          <div class="cards">
+            <div class="trade-card">
+              <div class="trade-top">
+                <strong>Report Preview</strong>
+                <span class="score" id="reportItemCount">0</span>
+              </div>
+              <pre id="reportPreview" style="white-space:pre-wrap; margin:0; color:var(--muted); font-size:12px; line-height:1.45; max-height:420px; overflow:auto;"></pre>
+            </div>
+            <div class="notice">
+              Export boundary: reports are read-only research snapshots. They intentionally avoid entry calls, copy-trade prompts, profit claims, and restricted-use instructions.
             </div>
           </div>
         </section>
@@ -1471,6 +1496,209 @@
       });
     }
 
+    function reportTimestamp() {
+      const now = new Date();
+      return now.toISOString().replace(/[:.]/g, "-").slice(0, 19);
+    }
+
+    function topDecoratedMarkets(limit = 8) {
+      return decorateMarkets(markets)
+        .sort((a, b) => Number(b.radarScore || 0) - Number(a.radarScore || 0))
+        .slice(0, limit);
+    }
+
+    function topAnomalyMarkets(limit = 5) {
+      return decorateMarkets(markets)
+        .filter(m => Number(m.anomalyScore || 0) >= 50)
+        .sort((a, b) => Number(b.anomalyScore || 0) - Number(a.anomalyScore || 0))
+        .slice(0, limit);
+    }
+
+    function markdownTable(headers, rows) {
+      const safe = value => String(value ?? "").replace(/\|/g, "/").replace(/\n/g, " ");
+      return [
+        `| ${headers.map(safe).join(" | ")} |`,
+        `| ${headers.map(() => "---").join(" | ")} |`,
+        ...rows.map(row => `| ${row.map(safe).join(" | ")} |`)
+      ].join("\n");
+    }
+
+    function generateMarkdownReport() {
+      const topMarkets = topDecoratedMarkets(8);
+      const anomalies = topAnomalyMarkets(5);
+      const watched = new Set(watchlist.map(item => item.key));
+      const hotWatchlist = topMarkets.filter(m => watched.has(marketKey(m.title))).slice(0, 5);
+      const alertRows = alertEvents.slice(0, 8);
+      const alphaRows = alphaWallets.slice(0, 6);
+      const lines = [];
+
+      lines.push("# Prediction Market Radar Research Report");
+      lines.push("");
+      lines.push(`Generated: ${new Date().toLocaleString()}`);
+      lines.push("");
+      lines.push("> Research-only snapshot. No orders, wallet connection, financial advice, betting advice, copy-trading, or geo-bypass guidance.");
+      lines.push("");
+      lines.push("## Summary");
+      lines.push("");
+      lines.push(`- Tracked markets: ${markets.length}`);
+      lines.push(`- Large public trade observations: ${whales.length}`);
+      lines.push(`- Watchlist items: ${watchlist.length}`);
+      lines.push(`- Local alert observations: ${alertEvents.length}`);
+      lines.push(`- Wallet alpha candidates: ${alphaWallets.length}`);
+      lines.push("");
+
+      lines.push("## Top Radar Markets");
+      lines.push("");
+      lines.push(markdownTable(
+        ["Market", "Category", "Probability", "Move", "Volume", "Liquidity", "Radar", "Anomaly"],
+        topMarkets.map(m => [
+          m.title,
+          m.cat,
+          `${Number(m.prob || 0).toFixed(0)}%`,
+          `${Number(m.move || 0).toFixed(1)} pts`,
+          money(m.vol),
+          money(m.liq || m.liquidity),
+          m.radarScore,
+          m.anomalyScore
+        ])
+      ));
+      lines.push("");
+
+      lines.push("## Anomaly Watch");
+      lines.push("");
+      lines.push(anomalies.length ? markdownTable(
+        ["Market", "Anomaly", "Move", "Radar", "Reasons"],
+        anomalies.map(m => [
+          m.title,
+          m.anomalyScore,
+          `${Number(m.move || 0).toFixed(1)} pts`,
+          m.radarScore,
+          (m.anomalyReasons || []).join(" / ")
+        ])
+      ) : "No anomaly score above the current display threshold.");
+      lines.push("");
+
+      lines.push("## Watchlist Focus");
+      lines.push("");
+      lines.push(hotWatchlist.length ? markdownTable(
+        ["Market", "Radar", "Anomaly", "Move"],
+        hotWatchlist.map(m => [m.title, m.radarScore, m.anomalyScore, `${Number(m.move || 0).toFixed(1)} pts`])
+      ) : "No watched market appears in the current top radar list.");
+      lines.push("");
+
+      lines.push("## Large Public Trades");
+      lines.push("");
+      lines.push(whales.length ? markdownTable(
+        ["Wallet", "Observed Size", "Market", "Action", "Score"],
+        whales.slice(0, 8).map(w => [w.wallet, w.amount, w.market, w.action, w.score])
+      ) : "No recent large public trade observations loaded.");
+      lines.push("");
+
+      lines.push("## Wallet Alpha Candidates");
+      lines.push("");
+      lines.push(alphaRows.length ? markdownTable(
+        ["Wallet", "Alpha", "Trades", "Observed Size", "Markets", "Largest"],
+        alphaRows.map(w => [
+          w.shortWallet || formatWallet(w.wallet),
+          w.alphaScore,
+          w.tradeCount,
+          money(w.notional),
+          w.marketCount,
+          money(w.largestTrade)
+        ])
+      ) : "Wallet alpha candidates are not loaded yet.");
+      lines.push("");
+
+      lines.push("## Local Alert Observations");
+      lines.push("");
+      lines.push(alertRows.length ? markdownTable(
+        ["Time", "Type", "Observation"],
+        alertRows.map(a => [new Date(a.time).toLocaleString(), a.title, a.body])
+      ) : "No local alert observations recorded in this browser.");
+      lines.push("");
+
+      lines.push("## Safety Boundary");
+      lines.push("");
+      lines.push("This report is a descriptive public-data snapshot only. It is not a signal product, investment recommendation, betting recommendation, or instruction to trade.");
+      lines.push("");
+      return lines.join("\n");
+    }
+
+    function markdownToHtml(markdown) {
+      const htmlLines = markdown.split("\n").map(line => {
+        if (line.startsWith("# ")) return `<h1>${escapeHtml(line.slice(2))}</h1>`;
+        if (line.startsWith("## ")) return `<h2>${escapeHtml(line.slice(3))}</h2>`;
+        if (line.startsWith("> ")) return `<blockquote>${escapeHtml(line.slice(2))}</blockquote>`;
+        if (line.startsWith("- ")) return `<li>${escapeHtml(line.slice(2))}</li>`;
+        if (line.startsWith("| ")) return `<pre>${escapeHtml(line)}</pre>`;
+        return line.trim() ? `<p>${escapeHtml(line)}</p>` : "";
+      }).join("\n");
+      return `<!doctype html>
+<html lang="en">
+<head>
+  <meta charset="utf-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1" />
+  <title>Prediction Market Radar Research Report</title>
+  <style>
+    body { margin: 0; padding: 28px; background: #0f1318; color: #e7edf3; font: 14px/1.55 Arial, sans-serif; }
+    main { max-width: 980px; margin: 0 auto; }
+    h1, h2 { color: #f4f7fb; }
+    blockquote { border-left: 3px solid #4f8cc9; margin: 16px 0; padding: 10px 14px; background: #141b22; color: #c8d2dc; }
+    pre { white-space: pre-wrap; border: 1px solid #252d36; background: #12171d; border-radius: 8px; padding: 8px; overflow: auto; }
+    li { margin: 4px 0; }
+  </style>
+</head>
+<body><main>${htmlLines}</main></body>
+</html>`;
+    }
+
+    function downloadTextFile(filename, content, type) {
+      const blob = new Blob([content], { type });
+      const url = URL.createObjectURL(blob);
+      const a = document.createElement("a");
+      a.href = url;
+      a.download = filename;
+      document.body.appendChild(a);
+      a.click();
+      a.remove();
+      URL.revokeObjectURL(url);
+    }
+
+    function renderReportPreview() {
+      const report = generateMarkdownReport();
+      const preview = document.getElementById("reportPreview");
+      const count = document.getElementById("reportItemCount");
+      if (preview) preview.textContent = report;
+      if (count) count.textContent = String(markets.length + whales.length + alertEvents.length);
+      return report;
+    }
+
+    function bindReportControls() {
+      document.getElementById("refreshReportBtn").addEventListener("click", () => {
+        renderReportPreview();
+        document.getElementById("reportStatus").textContent = "Report refreshed from the current browser state.";
+      });
+      document.getElementById("copyReportBtn").addEventListener("click", async () => {
+        const report = renderReportPreview();
+        try {
+          await navigator.clipboard.writeText(report);
+          document.getElementById("reportStatus").textContent = "Markdown report copied to clipboard.";
+        } catch {
+          document.getElementById("reportStatus").textContent = "Clipboard permission unavailable. Use Download Markdown instead.";
+        }
+      });
+      document.getElementById("downloadMarkdownBtn").addEventListener("click", () => {
+        const report = renderReportPreview();
+        downloadTextFile(`prediction-market-radar-${reportTimestamp()}.md`, report, "text/markdown;charset=utf-8");
+        document.getElementById("reportStatus").textContent = "Markdown report downloaded.";
+      });
+      document.getElementById("downloadHtmlBtn").addEventListener("click", () => {
+        const report = renderReportPreview();
+        downloadTextFile(`prediction-market-radar-${reportTimestamp()}.html`, markdownToHtml(report), "text/html;charset=utf-8");
+        document.getElementById("reportStatus").textContent = "HTML report downloaded.";
+      });
+    }
+
     async function loadServerHistoryChanges() {
       try {
         const response = await fetch("/api/history?limit=2", { cache: "no-store" });
@@ -1606,11 +1834,13 @@
       try {
         await Promise.all([loadLiveMarkets(), loadLiveWhales()]);
         evaluateAlertRules();
+        renderReportPreview();
         const stamp = new Date().toLocaleTimeString();
         status.textContent = "Live public data loaded from Gamma API and recent trade data at " + stamp + ".";
       } catch (error) {
         status.textContent = "Live API unavailable in this browser. Sample data remains active. " + error.message;
         evaluateAlertRules();
+        renderReportPreview();
       }
     }
 
@@ -1806,6 +2036,7 @@
     });
 
     bindAlertRuleControls();
+    bindReportControls();
     renderMarkets();
     renderWhales();
     renderNews();
@@ -1813,6 +2044,7 @@
     renderAlphaRanking();
     renderAlertRules();
     evaluateAlertRules();
+    renderReportPreview();
     document.getElementById("activityRows").innerHTML = `<tr><td>TRADE</td><td>BTC 15m intervals</td><td class="green">BUY</td><td>$64k</td></tr>`;
     loadLiveData();
     loadWalletAlphaRanking();

@@ -61,6 +61,7 @@ Mobile:
 - Ranks public wallet activity candidates with Wallet Alpha Ranking
 - Keeps a small local `data/history.json` market history when run with `python server.py`
 - Provides local alert rules, local observation logs, and optional browser notifications
+- Exports the current research snapshot as Markdown or HTML
 - Includes local snapshot fallback data
 - Includes a local smoke test and GitHub Actions CI
 - Works locally with a tiny Python proxy server
@@ -171,7 +172,6 @@ Planned:
 
 - better probability-change history
 - Telegram and Discord alerts
-- exportable research reports
 - screenshots and demo GIF
 
 ## Safety Boundary
