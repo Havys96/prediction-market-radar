@@ -64,10 +64,10 @@ Check:
 - Repo description is set
 - Topics are set
 - Release `v0.1.0` is created
-- Release notes match `CHANGELOG.md`
+- Release notes use `RELEASE_NOTES_v0.1.0.md` and match `CHANGELOG.md`
 - GitHub Actions CI passes
 - `v0.1.0` tag is visible on GitHub
 
 ## 6. First Public Post
 
-Use `LAUNCH.md`.
+Use `FIRST_POST.md` for the first short post, or `LAUNCH.md` for longer variants.

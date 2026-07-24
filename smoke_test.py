@@ -21,6 +21,8 @@ REQUIRED_FILES = [
     "LICENSE",
     "VERSION",
     "CHANGELOG.md",
+    "RELEASE_NOTES_v0.1.0.md",
+    "FIRST_POST.md",
     ".github/FUNDING.yml",
     ".github/pull_request_template.md",
     ".github/ISSUE_TEMPLATE/bug_report.md",

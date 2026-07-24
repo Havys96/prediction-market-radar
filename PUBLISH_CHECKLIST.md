@@ -48,9 +48,9 @@ Check:
 2. Upload all files in this folder.
 3. Add screenshots from `docs/`.
 4. Push release tag `v0.1.0`.
-5. Create first GitHub release from tag `v0.1.0`.
+5. Create first GitHub release from tag `v0.1.0` using `RELEASE_NOTES_v0.1.0.md`.
 6. Confirm GitHub Actions CI passes.
-7. Use `LAUNCH.md` for X, Reddit, Discord, and release notes.
+7. Use `FIRST_POST.md` or `LAUNCH.md` for X, Reddit, Discord, and release notes.
 8. Pin the repo on GitHub profile if the initial response is good.
 
 Shortcut:

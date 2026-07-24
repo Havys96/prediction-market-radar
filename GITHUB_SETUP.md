@@ -74,11 +74,15 @@ Release summary:
 Initial local MVP with read-only public market data, Radar Score, anomaly detection, 15m/1h/24h history deltas, whale trade observations, wallet scorecard, Wallet Alpha Ranking, local alerts, Markdown/HTML/CSV exports, snapshot cache, and GitHub-ready documentation.
 ```
 
-Release notes are also available in `CHANGELOG.md`.
+Release notes are also available in `RELEASE_NOTES_v0.1.0.md` and `CHANGELOG.md`.
 
 ## Profile Pin
 
 If early response is good, pin the repo on your GitHub profile.
+
+## First Public Post
+
+Use `FIRST_POST.md` after replacing `<repo link>` with the GitHub URL.
 
 ## Important
 
