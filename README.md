@@ -60,6 +60,7 @@ Mobile:
 - Scores public wallets with an Alpha Score research metric
 - Ranks public wallet activity candidates with Wallet Alpha Ranking
 - Keeps a small local `data/history.json` market history when run with `python server.py`
+- Provides local alert rules, local observation logs, and optional browser notifications
 - Includes local snapshot fallback data
 - Includes a local smoke test and GitHub Actions CI
 - Works locally with a tiny Python proxy server
@@ -169,8 +170,6 @@ v0.1.0
 Planned:
 
 - better probability-change history
-- watchlist persistence
-- browser notifications
 - Telegram and Discord alerts
 - exportable research reports
 - screenshots and demo GIF

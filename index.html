@@ -454,6 +454,46 @@
       min-width: 0;
     }
 
+    .alert-grid {
+      display: grid;
+      grid-template-columns: repeat(2, minmax(0, 1fr));
+      gap: 10px;
+    }
+
+    .alert-control {
+      display: grid;
+      gap: 7px;
+      border: 1px solid var(--line);
+      background: var(--panel-2);
+      border-radius: 8px;
+      padding: 12px;
+    }
+
+    .alert-control label {
+      display: flex;
+      align-items: center;
+      gap: 8px;
+      font-weight: 700;
+    }
+
+    .alert-control input[type="number"] {
+      width: 100%;
+      min-height: 36px;
+      border: 1px solid var(--line);
+      background: #10151a;
+      color: var(--text);
+      border-radius: 8px;
+      padding: 0 10px;
+    }
+
+    .alert-actions {
+      display: flex;
+      gap: 8px;
+      flex-wrap: wrap;
+      padding: 12px;
+      border-bottom: 1px solid var(--line);
+    }
+
     .notice {
       margin-top: 12px;
       border: 1px solid #3b3320;
@@ -502,7 +542,7 @@
 
     @media (max-width: 720px) {
       main { padding: 12px; }
-      .topbar, .kpis, .mini { grid-template-columns: 1fr; }
+      .topbar, .kpis, .mini, .alert-grid { grid-template-columns: 1fr; }
       nav { grid-template-columns: 1fr 1fr; }
       th:nth-child(3), td:nth-child(3),
       th:nth-child(5), td:nth-child(5) { display: none; }
@@ -761,21 +801,44 @@
             <h2>Alert Rules</h2>
             <span class="label">Local notifications only</span>
           </div>
+          <div class="alert-actions">
+            <button class="btn" id="enableNotificationsBtn">Enable browser notifications</button>
+            <button class="btn" id="testAlertBtn">Test alert</button>
+            <span class="label" id="notificationStatus">Browser notifications are optional. Local event logs work without permission.</span>
+          </div>
           <div class="cards">
-            <div class="trade-card">
-              <div class="trade-top"><strong>Probability move</strong><span class="score">ON</span></div>
-              <span class="label">Notify when a watched market moves more than 8 percentage points in 15 minutes.</span>
+            <div class="alert-grid">
+              <div class="alert-control">
+                <label><input type="checkbox" id="probabilityAlertToggle" /> Probability move</label>
+                <span class="label">Log watched markets when public probability movement crosses the threshold.</span>
+                <input type="number" id="moveThresholdInput" min="1" max="50" step="1" />
+                <span class="label">Threshold in percentage points.</span>
+              </div>
+              <div class="alert-control">
+                <label><input type="checkbox" id="anomalyAlertToggle" /> Anomaly score</label>
+                <span class="label">Log markets when the research anomaly score crosses the threshold.</span>
+                <input type="number" id="anomalyThresholdInput" min="10" max="100" step="1" />
+                <span class="label">Threshold from 0 to 100.</span>
+              </div>
+              <div class="alert-control">
+                <label><input type="checkbox" id="whaleAlertToggle" /> Large public trade</label>
+                <span class="label">Log recent public trade observations above the configured size.</span>
+                <input type="number" id="whaleThresholdInput" min="100" max="1000000" step="100" />
+                <span class="label">Observed size in USD.</span>
+              </div>
+              <div class="alert-control">
+                <label><input type="checkbox" id="watchlistAlertToggle" /> Watchlist focus</label>
+                <span class="label">Prioritize watched markets when a probability or anomaly rule is triggered.</span>
+                <input type="number" id="eventLimitInput" min="5" max="80" step="5" />
+                <span class="label">Maximum local observations to keep.</span>
+              </div>
             </div>
             <div class="trade-card">
-              <div class="trade-top"><strong>Whale trade</strong><span class="score">ON</span></div>
-              <span class="label">Notify when observed public trade size is above $10,000.</span>
-            </div>
-            <div class="trade-card">
-              <div class="trade-top"><strong>News-linked move</strong><span class="score">ON</span></div>
-              <span class="label">Notify when a top mover has a matching news keyword within 60 minutes.</span>
+              <div class="trade-top"><strong>Recent Local Observations</strong><span class="score" id="alertCount">0</span></div>
+              <div id="alertEventList" class="cards"></div>
             </div>
             <div class="notice">
-              Pro boundary: Telegram and Discord alerts are acceptable if they remain descriptive. Avoid entry instructions, copy-trade buttons, and profit promises.
+              Pro boundary: alerts are descriptive observations only. They do not provide entry instructions, copy-trade actions, betting advice, or profit promises.
             </div>
           </div>
         </section>
@@ -848,6 +911,9 @@
     let serverHistoryChanges = [];
     let serverHistoryMap = new Map();
     let alphaWallets = [];
+    let alertSettings = loadAlertSettings();
+    let alertEvents = loadLocalList("pmr_alert_events");
+    let alertKeys = loadLocalList("pmr_alert_keys");
 
     function loadLocalList(key) {
       try {
@@ -860,6 +926,30 @@
 
     function saveLocalList(key, value) {
       localStorage.setItem(key, JSON.stringify(value.slice(0, 80)));
+    }
+
+    function loadAlertSettings() {
+      const defaults = {
+        probability: true,
+        anomaly: true,
+        whale: true,
+        watchlistOnly: true,
+        browserNotifications: false,
+        moveThreshold: 8,
+        anomalyThreshold: 65,
+        whaleThreshold: 10000,
+        eventLimit: 30
+      };
+      try {
+        const parsed = JSON.parse(localStorage.getItem("pmr_alert_settings") || "{}");
+        return { ...defaults, ...parsed };
+      } catch {
+        return defaults;
+      }
+    }
+
+    function saveAlertSettings() {
+      localStorage.setItem("pmr_alert_settings", JSON.stringify(alertSettings));
     }
 
     function escapeHtml(value) {
@@ -879,6 +969,17 @@
       n = Number(n || 0);
       if (n >= 1000000) return "$" + (n / 1000000).toFixed(1) + "m";
       return "$" + Math.round(n / 1000) + "k";
+    }
+
+    function parseMoneyText(value) {
+      const text = String(value || "").toLowerCase().replace(/[$,\s]/g, "");
+      const match = text.match(/^(-?\d+(?:\.\d+)?)([km])?$/);
+      if (!match) return 0;
+      const base = Number(match[1]);
+      if (!Number.isFinite(base)) return 0;
+      if (match[2] === "m") return base * 1000000;
+      if (match[2] === "k") return base * 1000;
+      return base;
     }
 
     function clamp(n, min, max) {
@@ -1209,6 +1310,167 @@
       `).join("") : `<div class="trade-card"><span class="label">Movement log starts after the next refresh. It compares the previous local snapshot with the current market feed.</span></div>`;
     }
 
+    function notificationStatusText() {
+      if (!("Notification" in window)) return "Browser notifications are not supported here. Local event logs remain active.";
+      return `Browser notification permission: ${Notification.permission}. Local event logs remain active.`;
+    }
+
+    function syncAlertForm() {
+      const pairs = [
+        ["probabilityAlertToggle", "probability", "checked"],
+        ["anomalyAlertToggle", "anomaly", "checked"],
+        ["whaleAlertToggle", "whale", "checked"],
+        ["watchlistAlertToggle", "watchlistOnly", "checked"],
+        ["moveThresholdInput", "moveThreshold", "value"],
+        ["anomalyThresholdInput", "anomalyThreshold", "value"],
+        ["whaleThresholdInput", "whaleThreshold", "value"],
+        ["eventLimitInput", "eventLimit", "value"]
+      ];
+      pairs.forEach(([id, key, prop]) => {
+        const el = document.getElementById(id);
+        if (el) el[prop] = alertSettings[key];
+      });
+      const status = document.getElementById("notificationStatus");
+      if (status) status.textContent = notificationStatusText();
+    }
+
+    function renderAlertEvents() {
+      const list = document.getElementById("alertEventList");
+      const count = document.getElementById("alertCount");
+      if (!list || !count) return;
+      count.textContent = String(alertEvents.length);
+      list.innerHTML = alertEvents.length ? alertEvents.slice(0, alertSettings.eventLimit).map(item => `
+        <div class="trade-card ${item.focus ? "watch" : ""}">
+          <div class="trade-top">
+            <strong>${escapeHtml(item.title)}</strong>
+            <span class="label">${new Date(item.time).toLocaleTimeString()}</span>
+          </div>
+          <span class="label">${escapeHtml(item.body)}</span>
+        </div>
+      `).join("") : `<div class="trade-card"><span class="label">No local observations logged yet. Refresh live data or press Test alert.</span></div>`;
+    }
+
+    function renderAlertRules() {
+      syncAlertForm();
+      renderAlertEvents();
+    }
+
+    function saveAlertEvents() {
+      const limit = clamp(Number(alertSettings.eventLimit || 30), 5, 80);
+      alertEvents = alertEvents.slice(0, limit);
+      alertKeys = alertKeys.slice(0, 120);
+      saveLocalList("pmr_alert_events", alertEvents);
+      saveLocalList("pmr_alert_keys", alertKeys);
+      renderAlertEvents();
+    }
+
+    function sendBrowserNotification(title, body) {
+      if (!alertSettings.browserNotifications || !("Notification" in window) || Notification.permission !== "granted") return;
+      new Notification(title, { body });
+    }
+
+    function recordAlert(event) {
+      if (!event.key || alertKeys.includes(event.key)) return;
+      alertKeys.unshift(event.key);
+      alertEvents.unshift({ ...event, time: new Date().toISOString() });
+      saveAlertEvents();
+      sendBrowserNotification(event.title, event.body);
+    }
+
+    function alertBucket() {
+      return Math.floor(Date.now() / (15 * 60 * 1000));
+    }
+
+    function evaluateAlertRules() {
+      const bucket = alertBucket();
+      const watched = new Set(watchlist.map(item => item.key));
+      decorateMarkets(markets).forEach(m => {
+        const key = marketKey(m.title);
+        const isWatched = watched.has(key);
+        if (alertSettings.watchlistOnly && !isWatched) return;
+        const move = Math.abs(Number(m.historyProbDelta || m.move || 0));
+        if (alertSettings.probability && move >= Number(alertSettings.moveThreshold || 8)) {
+          recordAlert({
+            key: `prob:${key}:${Math.round(move)}:${bucket}`,
+            title: "Probability movement observed",
+            body: `${m.title} moved ${Number(m.historyProbDelta || m.move || 0).toFixed(1)} pts in public data.`,
+            focus: isWatched
+          });
+        }
+        if (alertSettings.anomaly && Number(m.anomalyScore || 0) >= Number(alertSettings.anomalyThreshold || 65)) {
+          recordAlert({
+            key: `anom:${key}:${Math.round(Number(m.anomalyScore || 0) / 5) * 5}:${bucket}`,
+            title: "Anomaly threshold observed",
+            body: `${m.title} has anomaly score ${m.anomalyScore}. Research review only.`,
+            focus: isWatched
+          });
+        }
+      });
+
+      whales.forEach(w => {
+        const amount = parseMoneyText(w.amount);
+        if (!alertSettings.whale || amount < Number(alertSettings.whaleThreshold || 10000)) return;
+        const key = marketKey(`${w.wallet}-${w.market}-${Math.round(amount / 1000)}-${bucket}`);
+        recordAlert({
+          key: `whale:${key}`,
+          title: "Large public trade observed",
+          body: `${w.wallet} observed ${w.amount} in ${w.market}. Descriptive public activity only.`,
+          focus: false
+        });
+      });
+    }
+
+    function bindAlertRuleControls() {
+      const bindCheck = (id, key) => {
+        const el = document.getElementById(id);
+        if (!el) return;
+        el.addEventListener("change", () => {
+          alertSettings[key] = Boolean(el.checked);
+          saveAlertSettings();
+          evaluateAlertRules();
+        });
+      };
+      const bindNumber = (id, key, min, max) => {
+        const el = document.getElementById(id);
+        if (!el) return;
+        el.addEventListener("change", () => {
+          alertSettings[key] = clamp(Number(el.value || alertSettings[key]), min, max);
+          el.value = alertSettings[key];
+          saveAlertSettings();
+          evaluateAlertRules();
+        });
+      };
+
+      bindCheck("probabilityAlertToggle", "probability");
+      bindCheck("anomalyAlertToggle", "anomaly");
+      bindCheck("whaleAlertToggle", "whale");
+      bindCheck("watchlistAlertToggle", "watchlistOnly");
+      bindNumber("moveThresholdInput", "moveThreshold", 1, 50);
+      bindNumber("anomalyThresholdInput", "anomalyThreshold", 10, 100);
+      bindNumber("whaleThresholdInput", "whaleThreshold", 100, 1000000);
+      bindNumber("eventLimitInput", "eventLimit", 5, 80);
+
+      document.getElementById("enableNotificationsBtn").addEventListener("click", async () => {
+        if (!("Notification" in window)) {
+          syncAlertForm();
+          return;
+        }
+        const permission = await Notification.requestPermission();
+        alertSettings.browserNotifications = permission === "granted";
+        saveAlertSettings();
+        syncAlertForm();
+      });
+
+      document.getElementById("testAlertBtn").addEventListener("click", () => {
+        recordAlert({
+          key: `test:${Date.now()}`,
+          title: "Test observation",
+          body: "Local alert log and optional browser notification are working.",
+          focus: true
+        });
+      });
+    }
+
     async function loadServerHistoryChanges() {
       try {
         const response = await fetch("/api/history?limit=2", { cache: "no-store" });
@@ -1343,10 +1605,12 @@
       status.textContent = "Loading live public Polymarket data...";
       try {
         await Promise.all([loadLiveMarkets(), loadLiveWhales()]);
+        evaluateAlertRules();
         const stamp = new Date().toLocaleTimeString();
         status.textContent = "Live public data loaded from Gamma API and recent trade data at " + stamp + ".";
       } catch (error) {
         status.textContent = "Live API unavailable in this browser. Sample data remains active. " + error.message;
+        evaluateAlertRules();
       }
     }
 
@@ -1541,11 +1805,14 @@
       analyzeWalletLive(input);
     });
 
+    bindAlertRuleControls();
     renderMarkets();
     renderWhales();
     renderNews();
     renderWalletRows();
     renderAlphaRanking();
+    renderAlertRules();
+    evaluateAlertRules();
     document.getElementById("activityRows").innerHTML = `<tr><td>TRADE</td><td>BTC 15m intervals</td><td class="green">BUY</td><td>$64k</td></tr>`;
     loadLiveData();
     loadWalletAlphaRanking();

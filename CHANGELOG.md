@@ -40,6 +40,8 @@ Initial public-ready MVP.
 - Server-side market history snapshots under `data/history.json`
 - Wallet Alpha Ranking from recent public trade activity
 - History-backed anomaly scoring with probability and volume deltas
+- Local alert rules with browser notification permission flow
+- Local descriptive observation log for probability moves, anomaly thresholds, and large public trades
 
 ### Safety Boundary
 
@@ -55,7 +57,7 @@ Initial public-ready MVP.
 ### Known Limitations
 
 - Probability-change history is approximate and depends on public API fields.
-- Watchlists are not persisted yet.
 - Telegram and Discord alerts are documented but not implemented.
+- Browser notifications require explicit browser permission and do not run as background server jobs.
 - Wallet analysis depends on public Data API availability.
 - Snapshot cache can become stale until refreshed.
