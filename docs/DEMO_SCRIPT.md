@@ -2,6 +2,11 @@
 
 Use this as the script for a 20-30 second GIF or short screen recording.
 
+Prepared assets:
+
+- `docs/demo-preview.gif`
+- `docs/social-preview.png`
+
 ## Goal
 
 Show that Prediction Market Radar is a local, read-only research dashboard for prediction-market public data.

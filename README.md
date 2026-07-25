@@ -19,6 +19,8 @@ It runs locally, requires no API key, and stays read-only: no wallet connection,
 
 ## Preview
 
+![Prediction Market Radar demo preview](docs/demo-preview.gif)
+
 ![Prediction Market Radar desktop screenshot](docs/screenshot-desktop.png)
 
 ## Why This Exists

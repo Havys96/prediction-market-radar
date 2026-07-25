@@ -16,6 +16,8 @@ https://github.com/Havys96/prediction-market-radar/releases/tag/v0.1.0
 
 Recommended images:
 
+- `docs/social-preview.png`
+- `docs/demo-preview.gif`
 - `docs/screenshot-desktop.png`
 - `docs/screenshot-mobile.png`
 
