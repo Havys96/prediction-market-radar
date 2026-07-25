@@ -5,9 +5,37 @@
 ![Wallet](https://img.shields.io/badge/wallet_connection-none-f0bd45)
 ![Execution](https://img.shields.io/badge/order_execution-none-f25d5d)
 
-Read-only intelligence dashboard for prediction-market research.
+One local screen for prediction-market public data: market movers, probability shifts, large public trades, wallet research, local alerts, and exportable research reports.
 
-Prediction Market Radar gives you one local screen for market movers, probability shifts, whale-sized public trades, and public wallet research without connecting a wallet or placing trades.
+Use it when you want to quickly answer:
+
+- Which markets moved the most?
+- Which moves look unusual enough to review?
+- Where are large public trades showing up?
+- Which public wallets are worth studying?
+- What changed since the last local snapshot?
+
+It runs locally, requires no API key, and stays read-only: no wallet connection, no private keys, no order execution, and no trading or betting advice.
+
+## Preview
+
+![Prediction Market Radar desktop screenshot](docs/screenshot-desktop.png)
+
+## Why This Exists
+
+Prediction-market research is scattered across market pages, trade feeds, wallet pages, notes, and exports.
+
+Prediction Market Radar compresses that review loop into a small local dashboard:
+
+| Research question | Where to look |
+| --- | --- |
+| What moved today? | Radar tab, sorted by Radar Score |
+| What looks abnormal? | Anomaly Detector and movement history |
+| Are large public trades appearing? | Whale Watch |
+| Which wallets deserve more review? | Wallet scorecard and Wallet Alpha Ranking |
+| Can I save the current view? | Reports tab for Markdown, HTML, and CSV exports |
+
+> Research dashboard only. No wallet connection, no private keys, no order execution, no trading or betting advice.
 
 ## Links
 
@@ -35,16 +63,6 @@ Open:
 http://127.0.0.1:8765
 ```
 
-Prediction Market Radar helps you answer:
-
-- What markets are moving right now?
-- Where are large public trades appearing?
-- Which public wallets are active or worth studying?
-- Which markets deserve research attention first?
-- Is a wallet actually useful to study, or just noisy?
-
-> Research dashboard only. No wallet connection, no private keys, no order execution, no trading or betting advice.
-
 ## Best For
 
 - prediction-market researchers
@@ -66,28 +84,7 @@ See `DEMO.md` for the full review checklist.
 
 See `PRELAUNCH_REVIEW.md` before publishing the repo.
 
-## Why People Might Use It
-
-Prediction markets are fragmented. A researcher often has to open market pages, wallet pages, leaderboards, trade feeds, and notes just to understand what changed.
-
-This project compresses that loop into a small local dashboard:
-
-| Problem | What the dashboard shows |
-| --- | --- |
-| Too many markets | Ranked market list with Radar Score |
-| Hard to spot momentum | Probability, volume, liquidity, and close-time indicators |
-| Whale trades are noisy | Recent large public trades in one panel |
-| Wallets are hard to judge | Public wallet PnL, win rate, risk grade, positions, and activity |
-| Notes are scattered | Markdown, HTML, and CSV research export |
-| API outages happen | Snapshot cache fallback under `data/` |
-
-It is built as a public-data research tool, not a bot, not a signal service, and not a betting product.
-
-## Screenshot
-
-Desktop radar view:
-
-![Prediction Market Radar desktop screenshot](docs/screenshot-desktop.png)
+## Mobile Preview
 
 Mobile reports view:
 

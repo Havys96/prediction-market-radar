@@ -52,6 +52,20 @@ v0.1.0 includes Radar Score, anomaly detection, large public trade observations,
 Feedback on data sources, scoring, and UX would be useful:
 https://github.com/Havys96/prediction-market-radar
 
+## X Follow-up - Demo Focus
+
+I am tightening the demo for Prediction Market Radar.
+
+The core idea:
+one local, read-only screen for prediction-market public data.
+
+It helps review market movers, anomalies, large public trades, public wallet activity, local alerts, and exportable research notes.
+
+No wallet connection, private keys, order execution, or trading/betting advice.
+
+Repo:
+https://github.com/Havys96/prediction-market-radar
+
 ## X Thread
 
 1/ I built Prediction Market Radar, an open-source local dashboard for prediction-market public data.
@@ -226,6 +240,12 @@ Korean personal account:
 
 ```text
 #개발 #깃허브 #오픈소스 #개발자 #사이드프로젝트 #빌드인퍼블릭 #코딩 #대시보드 #하메스랩스
+```
+
+Follow-up after low engagement:
+
+```text
+#opensource #github #buildinpublic #marketresearch #dashboard #developer #indiehacker #predictionmarkets
 ```
 
 ## First Posting Order
