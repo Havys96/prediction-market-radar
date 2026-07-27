@@ -48,6 +48,7 @@ Prediction Market Radar compresses that review loop into a small local dashboard
 | Latest release | https://github.com/Havys96/prediction-market-radar/releases/tag/v0.1.0 |
 | Demo checklist | `DEMO.md` |
 | Community feedback drafts | `COMMUNITY_FEEDBACK.md` |
+| New issue | https://github.com/Havys96/prediction-market-radar/issues/new/choose |
 | Launch copy | `SOCIAL_POSTS.md`, `PUBLIC_LAUNCH_PACK.md`, `FIRST_POST.md`, and `LAUNCH.md` |
 | Legal notice | `LEGAL.md` |
 | Support guide | `FUNDING_GUIDE.md` |

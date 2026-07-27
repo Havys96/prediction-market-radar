@@ -119,6 +119,14 @@ https://github.com/Havys96/prediction-market-radar
 
 Create these as public issues if the repo needs clearer contribution paths.
 
+Fast path:
+
+1. Open `https://github.com/Havys96/prediction-market-radar/issues/new/choose`.
+2. Use `Feedback request` for Issue 1.
+3. Use `Data-source request` for Issue 2.
+4. Use `Roadmap item` for Issue 3.
+5. Keep the issue titles and bodies below short. The goal is to invite discussion, not to look finished.
+
 ### Issue 1
 
 Title:
