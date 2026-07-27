@@ -423,6 +423,35 @@
       width: 100%;
     }
 
+    .score-explain {
+      display: grid;
+      gap: 10px;
+    }
+
+    .factor-row {
+      display: grid;
+      grid-template-columns: 110px 1fr 48px;
+      gap: 10px;
+      align-items: center;
+      color: #dce3ea;
+      font-size: 12px;
+    }
+
+    .factor-row .bar {
+      width: 100%;
+    }
+
+    .factor-note {
+      display: grid;
+      gap: 4px;
+      padding: 10px;
+      border: 1px solid var(--line);
+      background: #11161b;
+      border-radius: 8px;
+      font-size: 12px;
+      line-height: 1.4;
+    }
+
     .mini div {
       padding: 9px;
       border: 1px solid var(--line);
@@ -730,6 +759,21 @@
 
             <section class="panel">
               <div class="panel-head">
+                <h2>Radar Score Explained</h2>
+                <span class="label">Research priority, not advice</span>
+              </div>
+              <div class="cards">
+                <div class="trade-card score-explain" id="radarExplain">
+                  <div class="factor-note">
+                    <strong>Select a market to see why its Radar Score is high or low.</strong>
+                    <span class="label">Factors include probability movement, volume, liquidity, time to close, and public activity context.</span>
+                  </div>
+                </div>
+              </div>
+            </section>
+
+            <section class="panel">
+              <div class="panel-head">
                 <h2>Before / After Movement Log</h2>
                 <span class="label">Local snapshot comparison</span>
               </div>
@@ -1022,7 +1066,7 @@
       return Math.max(0, (ts - Date.now()) / 86400000);
     }
 
-    function calculateRadarScore(market) {
+    function calculateRadarBreakdown(market) {
       const moveScore = clamp(Math.abs(Number(market.move || 0)) * 2.2, 0, 30);
       const volumeScore = clamp(Math.log10(Number(market.vol || 0) + 1) * 5.2, 0, 30);
       const liquidityScore = clamp(Math.log10(Number(market.liq ?? market.liquidity ?? 0) + 1) * 3.2, 0, 18);
@@ -1030,7 +1074,21 @@
       const urgencyScore = days <= 1 ? 14 : days <= 7 ? 9 : days <= 30 ? 5 : 1;
       const signal = String(market.signal || "").toLowerCase();
       const signalScore = signal.includes("whale") ? 8 : signal.includes("news") ? 6 : signal.includes("volume") ? 5 : 2;
-      return Math.round(clamp(moveScore + volumeScore + liquidityScore + urgencyScore + signalScore, 0, 100));
+      const total = Math.round(clamp(moveScore + volumeScore + liquidityScore + urgencyScore + signalScore, 0, 100));
+      return {
+        total,
+        factors: [
+          { label: "Move", value: moveScore, max: 30, detail: `${Math.abs(Number(market.move || 0)).toFixed(1)} pt probability move` },
+          { label: "Volume", value: volumeScore, max: 30, detail: `${money(market.vol)} 24h volume` },
+          { label: "Liquidity", value: liquidityScore, max: 18, detail: `${money(market.liq ?? market.liquidity)} liquidity` },
+          { label: "Timing", value: urgencyScore, max: 14, detail: days <= 1 ? "closes within 24h" : days <= 7 ? "closes within 7d" : days <= 30 ? "closes within 30d" : "long-dated market" },
+          { label: "Context", value: signalScore, max: 8, detail: signal ? market.signal : "baseline public activity" }
+        ]
+      };
+    }
+
+    function calculateRadarScore(market) {
+      return calculateRadarBreakdown(market).total;
     }
 
     function calculateAnomaly(market) {
@@ -1103,6 +1161,43 @@
       return "culture";
     }
 
+    function radarGrade(score) {
+      const n = Number(score || 0);
+      if (n >= 80) return "High research priority";
+      if (n >= 65) return "Elevated research priority";
+      if (n >= 45) return "Moderate research priority";
+      return "Low research priority";
+    }
+
+    function renderRadarExplanation(market) {
+      const target = document.getElementById("radarExplain");
+      if (!target || !market) return;
+      const breakdown = calculateRadarBreakdown(market);
+      const factorRows = breakdown.factors.map(factor => {
+        const pct = Math.round(clamp((factor.value / factor.max) * 100, 0, 100));
+        return `
+          <div class="factor-row">
+            <strong>${escapeHtml(factor.label)}</strong>
+            <div class="bar" title="${escapeHtml(factor.detail)}"><i style="width:${pct}%"></i></div>
+            <span>${Math.round(factor.value)}/${factor.max}</span>
+          </div>
+          <span class="label">${escapeHtml(factor.detail)}</span>
+        `;
+      }).join("");
+
+      target.innerHTML = `
+        <div class="trade-top">
+          <strong>${escapeHtml(radarGrade(breakdown.total))}</strong>
+          <span class="score">${breakdown.total}</span>
+        </div>
+        ${factorRows}
+        <div class="factor-note">
+          <strong>How to read this</strong>
+          <span class="label">Radar Score ranks markets for research review. It combines public-data activity signals and does not generate buy, sell, entry, exit, betting, or copy-trading instructions.</span>
+        </div>
+      `;
+    }
+
     function firstNumber(...values) {
       for (const value of values) {
         const n = Number(value);
@@ -1130,7 +1225,7 @@
         });
 
       document.getElementById("marketRows").innerHTML = rows.map(m => `
-        <tr data-title="${escapeHtml(m.title)}" data-tag="${escapeHtml(m.tag)}" data-liq="${money(m.liq ?? m.liquidity)}" data-vol="${money(m.vol)}" data-score="${m.radarScore}" data-close="${escapeHtml(m.close || "n/a")}">
+        <tr data-key="${marketKey(m.title)}" data-title="${escapeHtml(m.title)}" data-tag="${escapeHtml(m.tag)}" data-liq="${money(m.liq ?? m.liquidity)}" data-vol="${money(m.vol)}" data-score="${m.radarScore}" data-close="${escapeHtml(m.close || "n/a")}">
           <td><button class="watch-btn ${watchlist.some(item => item.key === marketKey(m.title)) ? "active" : ""}" data-watch="${marketKey(m.title)}" data-title="${escapeHtml(m.title)}" title="Toggle watchlist">★</button></td>
           <td>
             <div class="market">
@@ -1154,8 +1249,12 @@
           document.getElementById("detailVol").textContent = row.dataset.vol;
           document.getElementById("detailClose").textContent = row.dataset.close;
           document.getElementById("detailScore").textContent = row.dataset.score;
+          const market = rows.find(item => marketKey(item.title) === row.dataset.key);
+          renderRadarExplanation(market);
         });
       });
+
+      if (rows.length) renderRadarExplanation(rows[0]);
 
       document.querySelectorAll(".watch-btn").forEach(button => {
         button.addEventListener("click", event => {
@@ -1927,6 +2026,7 @@
         document.getElementById("detailVol").textContent = money(best.vol);
         document.getElementById("detailClose").textContent = best.close || "n/a";
         document.getElementById("detailScore").textContent = best.radarScore || 0;
+        renderRadarExplanation(best);
       }
       await loadServerHistoryChanges();
       renderMarkets();

@@ -49,6 +49,8 @@ Initial public-ready MVP.
 - Server-side 15m, 1h, and 24h probability-change history calculations
 - Markets CSV and Markdown report now include history-window probability deltas
 - Prelaunch review document and updated GitHub publishing checklist
+- Explainable Radar Score panel with move, volume, liquidity, timing, and context factor breakdown
+- Radar Score explanation screenshot for update posts
 
 ### Safety Boundary
 

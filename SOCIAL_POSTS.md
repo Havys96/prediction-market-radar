@@ -18,6 +18,7 @@ https://github.com/Havys96/prediction-market-radar/releases/tag/v0.1.0
 
 Recommended images:
 
+- `docs/radar-score-explained.png`
 - `docs/social-preview.png`
 - `docs/demo-preview.gif`
 - `docs/screenshot-desktop.png`
@@ -68,6 +69,18 @@ It helps review market movers, anomalies, large public trades, public wallet act
 No wallet connection, private keys, order execution, or trading/betting advice.
 
 Repo:
+https://github.com/Havys96/prediction-market-radar
+
+## X Update - Explainable Radar Score
+
+Updated Prediction Market Radar.
+
+Radar Score is now explainable:
+move, volume, liquidity, timing, and public activity context are shown as separate research factors.
+
+Still read-only:
+no wallet connection, keys, orders, or trading/betting advice.
+
 https://github.com/Havys96/prediction-market-radar
 
 ## X Thread
@@ -138,6 +151,30 @@ GitHub:
 https://github.com/Havys96/prediction-market-radar
 
 #opensource #github #buildinpublic #predictionmarkets #dashboard #marketresearch #webapp #coding #developer #hameslabs
+
+## Instagram Update - Explainable Radar Score
+
+Updated Prediction Market Radar.
+
+Radar Score now shows why a market is ranked:
+
+- probability movement
+- 24h volume
+- liquidity
+- time to close
+- public activity context
+
+It is still a read-only research dashboard.
+
+No wallet connection.
+No private keys.
+No order execution.
+No trading or betting advice.
+
+GitHub:
+https://github.com/Havys96/prediction-market-radar
+
+#opensource #github #buildinpublic #marketresearch #dashboard #developer #predictionmarkets #hameslabs
 
 ## Instagram Caption - Personal Builder Version
 

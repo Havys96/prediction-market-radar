@@ -25,6 +25,10 @@ It runs locally, requires no API key, and stays read-only: no wallet connection,
 
 ![Prediction Market Radar desktop screenshot](docs/screenshot-desktop.png)
 
+Radar Score explanation:
+
+![Radar Score explained screenshot](docs/radar-score-explained.png)
+
 ## Why This Exists
 
 Prediction-market research is scattered across market pages, trade feeds, wallet pages, notes, and exports.
@@ -100,7 +104,7 @@ Mobile reports view:
 
 | Area | Included |
 | --- | --- |
-| Markets | active Polymarket markets, probability, volume, liquidity, Radar Score |
+| Markets | active Polymarket markets, probability, volume, liquidity, explainable Radar Score |
 | Anomalies | anomaly detector, 15m/1h/24h server-history deltas, before/after movement log |
 | Narratives | category-level attention clusters and top market summaries |
 | Watchlist | browser-stored watchlist and local daily digest |
@@ -195,6 +199,8 @@ It combines:
 - liquidity
 - time to market close
 - descriptive indicators such as whale, news, or volume activity
+
+The app shows the separate factor contribution for the selected market so the score is easier to inspect.
 
 Radar Score is not a trading recommendation.
 
