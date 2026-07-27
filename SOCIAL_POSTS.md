@@ -2,6 +2,8 @@
 
 Use these for the first public posts on X and Instagram.
 
+For Reddit, Hacker News, and GitHub issue drafts, use `COMMUNITY_FEEDBACK.md`.
+
 Repo:
 
 ```text

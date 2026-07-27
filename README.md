@@ -5,7 +5,9 @@
 ![Wallet](https://img.shields.io/badge/wallet_connection-none-f0bd45)
 ![Execution](https://img.shields.io/badge/order_execution-none-f25d5d)
 
-One local screen for prediction-market public data: market movers, probability shifts, large public trades, wallet research, local alerts, and exportable research reports.
+A local radar for spotting unusual prediction-market moves before opening 20 tabs.
+
+Prediction Market Radar turns public prediction-market data into one read-only local dashboard: movers, probability shifts, anomalies, large public trades, wallet research, local alerts, and exportable reports.
 
 Use it when you want to quickly answer:
 
@@ -45,6 +47,7 @@ Prediction Market Radar compresses that review loop into a small local dashboard
 | --- | --- |
 | Latest release | https://github.com/Havys96/prediction-market-radar/releases/tag/v0.1.0 |
 | Demo checklist | `DEMO.md` |
+| Community feedback drafts | `COMMUNITY_FEEDBACK.md` |
 | Launch copy | `SOCIAL_POSTS.md`, `PUBLIC_LAUNCH_PACK.md`, `FIRST_POST.md`, and `LAUNCH.md` |
 | Legal notice | `LEGAL.md` |
 | Support guide | `FUNDING_GUIDE.md` |
