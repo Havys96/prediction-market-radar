@@ -29,6 +29,10 @@ Radar Score explanation:
 
 ![Radar Score explained screenshot](docs/radar-score-explained.png)
 
+Guided demo mode:
+
+![Guided demo mode screenshot](docs/guided-demo-mode.png)
+
 ## Why This Exists
 
 Prediction-market research is scattered across market pages, trade feeds, wallet pages, notes, and exports.
@@ -52,6 +56,7 @@ Prediction Market Radar compresses that review loop into a small local dashboard
 | Latest release | https://github.com/Havys96/prediction-market-radar/releases/tag/v0.1.0 |
 | Demo checklist | `DEMO.md` |
 | Community feedback drafts | `COMMUNITY_FEEDBACK.md` |
+| Final experiment note | `FINAL_UPDATE.md` |
 | New issue | https://github.com/Havys96/prediction-market-radar/issues/new/choose |
 | Launch copy | `SOCIAL_POSTS.md`, `PUBLIC_LAUNCH_PACK.md`, `FIRST_POST.md`, and `LAUNCH.md` |
 | Legal notice | `LEGAL.md` |
@@ -113,6 +118,7 @@ Mobile reports view:
 | Wallet Alpha | public wallet activity scoring and candidate ranking |
 | Alerts | local rules, local observation log, optional browser notifications |
 | Reports | Markdown, HTML, and CSV research snapshot export |
+| Onboarding | guided demo mode for first-time reviewers |
 | Operations | local Python proxy, JSON snapshot fallback, smoke test, GitHub Actions CI |
 
 Requires no API key.

@@ -18,6 +18,7 @@ https://github.com/Havys96/prediction-market-radar/releases/tag/v0.1.0
 
 Recommended images:
 
+- `docs/guided-demo-mode.png`
 - `docs/radar-score-explained.png`
 - `docs/social-preview.png`
 - `docs/demo-preview.gif`
@@ -175,6 +176,47 @@ GitHub:
 https://github.com/Havys96/prediction-market-radar
 
 #opensource #github #buildinpublic #marketresearch #dashboard #developer #predictionmarkets #hameslabs
+
+## X Final Experiment Update
+
+I added one last feature to Prediction Market Radar: Guided Demo Mode.
+
+It walks through market movers, explainable Radar Score, public large-trade observations, local alerts, and exports.
+
+This was my first open-source public experiment. It did not get much traction, so I will pause active work here and move to the next Hames Labs experiment unless real feedback appears.
+
+Still read-only:
+no wallet connection, keys, orders, or trading/betting advice.
+
+https://github.com/Havys96/prediction-market-radar
+
+## Instagram Final Experiment Update
+
+Final update for Prediction Market Radar for now.
+
+I added Guided Demo Mode:
+
+- market movers
+- explainable Radar Score
+- public large-trade observations
+- local alerts
+- research exports
+
+This was my first open-source public experiment under Hames Labs.
+
+It did not get much traction, so I will pause active work on this project and move to the next experiment unless real feedback appears.
+
+The project remains open-source and read-only.
+
+No wallet connection.
+No private keys.
+No order execution.
+No trading or betting advice.
+
+GitHub:
+https://github.com/Havys96/prediction-market-radar
+
+#opensource #github #buildinpublic #marketresearch #dashboard #developer #hameslabs #indiehacker
 
 ## Instagram Caption - Personal Builder Version
 

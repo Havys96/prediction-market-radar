@@ -131,7 +131,7 @@
 
     .topbar {
       display: grid;
-      grid-template-columns: minmax(240px, 1fr) auto auto;
+      grid-template-columns: minmax(240px, 1fr) auto auto auto;
       gap: 12px;
       align-items: center;
       margin-bottom: 16px;
@@ -172,6 +172,12 @@
       color: var(--text);
       border-radius: 8px;
       padding: 0 13px;
+    }
+
+    .btn.demo {
+      border-color: #4b3d16;
+      background: #21190a;
+      color: #ffe2a3;
     }
 
     .kpis {
@@ -556,6 +562,65 @@
     .view { display: none; }
     .view.active { display: block; }
 
+    .demo-overlay {
+      position: fixed;
+      inset: 0;
+      z-index: 20;
+      display: none;
+      pointer-events: none;
+      background: rgba(3, 6, 10, .42);
+    }
+
+    .demo-overlay.active { display: block; }
+
+    .demo-card {
+      position: fixed;
+      right: 22px;
+      bottom: 22px;
+      width: min(420px, calc(100vw - 28px));
+      border: 1px solid #365979;
+      background: #101821;
+      border-radius: 8px;
+      box-shadow: var(--shadow);
+      padding: 16px;
+      display: grid;
+      gap: 12px;
+      pointer-events: auto;
+    }
+
+    .demo-card h2 {
+      margin: 0;
+      font-size: 18px;
+    }
+
+    .demo-card p {
+      margin: 0;
+      color: var(--muted);
+      line-height: 1.45;
+      font-size: 13px;
+    }
+
+    .demo-actions {
+      display: flex;
+      gap: 8px;
+      justify-content: space-between;
+      flex-wrap: wrap;
+    }
+
+    .demo-progress {
+      color: var(--blue);
+      font-size: 12px;
+      font-weight: 700;
+    }
+
+    .demo-highlight {
+      position: relative;
+      z-index: 21;
+      outline: 2px solid var(--blue);
+      outline-offset: 4px;
+      box-shadow: 0 0 0 7px rgba(93, 183, 255, .12);
+    }
+
     @media (max-width: 1080px) {
       .app { grid-template-columns: 1fr; }
       aside {
@@ -567,6 +632,7 @@
       nav { grid-template-columns: repeat(3, minmax(0, 1fr)); }
       .risk-box { display: none; }
       .grid { grid-template-columns: 1fr; }
+      .demo-card { left: 14px; right: 14px; bottom: 14px; width: auto; }
     }
 
     @media (max-width: 720px) {
@@ -614,6 +680,7 @@
           <option value="sports">Sports</option>
           <option value="culture">Culture</option>
         </select>
+        <button id="guidedDemoBtn" class="btn demo">Guided demo</button>
         <button id="refreshBtn" class="btn">Refresh sample</button>
       </div>
       <div class="source-status">
@@ -851,7 +918,7 @@
             <span class="label" id="notificationStatus">Browser notifications are optional. Local event logs work without permission.</span>
           </div>
           <div class="cards">
-            <div class="alert-grid">
+            <div class="alert-grid" id="alertRules">
               <div class="alert-control">
                 <label><input type="checkbox" id="probabilityAlertToggle" /> Probability move</label>
                 <span class="label">Log watched markets when public probability movement crosses the threshold.</span>
@@ -944,6 +1011,21 @@
         </section>
       </section>
     </main>
+  </div>
+
+  <div id="demoOverlay" class="demo-overlay" aria-hidden="true">
+    <div class="demo-card" role="dialog" aria-label="Guided demo">
+      <div class="demo-progress" id="demoProgress">Step 1 / 5</div>
+      <h2 id="demoTitle">Start with the radar</h2>
+      <p id="demoText">Market movers are ranked by a read-only research-priority score. No wallet connection or order execution is available.</p>
+      <div class="demo-actions">
+        <button class="btn" id="demoCloseBtn">Close</button>
+        <div>
+          <button class="btn" id="demoPrevBtn">Back</button>
+          <button class="btn" id="demoNextBtn">Next</button>
+        </div>
+      </div>
+    </div>
   </div>
 
   <script>
@@ -2236,12 +2318,81 @@
       }
     }
 
+    const demoSteps = [
+      {
+        view: "radar",
+        selector: "#marketRows",
+        title: "Start with market movers",
+        text: "The Radar table compresses public market data into one ranked review list: probability, move, volume, liquidity, and context."
+      },
+      {
+        view: "radar",
+        selector: "#radarExplain",
+        title: "Explain the score",
+        text: "Radar Score now breaks down into move, volume, liquidity, timing, and public activity context. It is a research-priority score, not advice."
+      },
+      {
+        view: "radar",
+        selector: "#whaleCards",
+        title: "Check public large trades",
+        text: "Whale Watch keeps large public trade observations in one place without connecting to a wallet or copying any position."
+      },
+      {
+        view: "alerts",
+        selector: "#alertRules",
+        title: "Use local descriptive alerts",
+        text: "Alerts are stored locally and describe public-data conditions only. They do not create entries, exits, signals, or betting instructions."
+      },
+      {
+        view: "readme",
+        selector: "#reportPreview",
+        title: "Export a research snapshot",
+        text: "Reports turn the current browser state into Markdown, HTML, or CSV files for notes and review."
+      }
+    ];
+
+    let currentDemoStep = 0;
+
+    function setActiveView(viewId) {
+      document.querySelectorAll(".nav-btn").forEach(b => b.classList.toggle("active", b.dataset.view === viewId));
+      document.querySelectorAll(".view").forEach(v => v.classList.toggle("active", v.id === viewId));
+    }
+
+    function clearDemoHighlight() {
+      document.querySelectorAll(".demo-highlight").forEach(el => el.classList.remove("demo-highlight"));
+    }
+
+    function renderGuidedDemoStep() {
+      const step = demoSteps[currentDemoStep];
+      setActiveView(step.view);
+      clearDemoHighlight();
+      document.getElementById("demoOverlay").classList.add("active");
+      document.getElementById("demoProgress").textContent = `Step ${currentDemoStep + 1} / ${demoSteps.length}`;
+      document.getElementById("demoTitle").textContent = step.title;
+      document.getElementById("demoText").textContent = step.text;
+      document.getElementById("demoPrevBtn").disabled = currentDemoStep === 0;
+      document.getElementById("demoNextBtn").textContent = currentDemoStep === demoSteps.length - 1 ? "Finish" : "Next";
+      requestAnimationFrame(() => {
+        const target = document.querySelector(step.selector);
+        if (!target) return;
+        target.classList.add("demo-highlight");
+        target.scrollIntoView({ block: "center", behavior: "smooth" });
+      });
+    }
+
+    function startGuidedDemo() {
+      currentDemoStep = 0;
+      renderGuidedDemoStep();
+    }
+
+    function closeGuidedDemo() {
+      clearDemoHighlight();
+      document.getElementById("demoOverlay").classList.remove("active");
+    }
+
     document.querySelectorAll(".nav-btn").forEach(btn => {
       btn.addEventListener("click", () => {
-        document.querySelectorAll(".nav-btn").forEach(b => b.classList.remove("active"));
-        document.querySelectorAll(".view").forEach(v => v.classList.remove("active"));
-        btn.classList.add("active");
-        document.getElementById(btn.dataset.view).classList.add("active");
+        setActiveView(btn.dataset.view);
       });
     });
 
@@ -2258,6 +2409,21 @@
     document.getElementById("categoryFilter").addEventListener("change", renderMarkets);
     document.getElementById("refreshBtn").addEventListener("click", () => {
       loadLiveData();
+    });
+
+    document.getElementById("guidedDemoBtn").addEventListener("click", startGuidedDemo);
+    document.getElementById("demoCloseBtn").addEventListener("click", closeGuidedDemo);
+    document.getElementById("demoPrevBtn").addEventListener("click", () => {
+      currentDemoStep = Math.max(0, currentDemoStep - 1);
+      renderGuidedDemoStep();
+    });
+    document.getElementById("demoNextBtn").addEventListener("click", () => {
+      if (currentDemoStep >= demoSteps.length - 1) {
+        closeGuidedDemo();
+        return;
+      }
+      currentDemoStep += 1;
+      renderGuidedDemoStep();
     });
 
     document.getElementById("analyzeBtn").addEventListener("click", () => {

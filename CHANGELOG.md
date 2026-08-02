@@ -51,6 +51,8 @@ Initial public-ready MVP.
 - Prelaunch review document and updated GitHub publishing checklist
 - Explainable Radar Score panel with move, volume, liquidity, timing, and context factor breakdown
 - Radar Score explanation screenshot for update posts
+- Guided Demo Mode that walks reviewers through market movers, Radar Score, Whale Watch, local alerts, and exports
+- Final experiment note for pausing active work unless real feedback appears
 
 ### Safety Boundary
 
